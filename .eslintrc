@@ -1,0 +1,25 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint/eslint-plugin"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "prettier"
+  ],
+  "ignorePatterns": [".eslintrc","jest.config.js","tsconfig.json"],
+  "rules": { 
+    "@typescript-eslint/no-empty-interface": "off",
+    "no-console": 1,
+    "prettier/prettier":[
+      "error",
+      {
+         "printWidth":120,
+      }
+   ]
+  }
+}
