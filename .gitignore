@@ -4,6 +4,7 @@ node_modules/
 build/
 tmp/
 temp/
+db_data/
 
 .env
 .env.local
