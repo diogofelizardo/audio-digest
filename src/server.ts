@@ -1,5 +1,6 @@
 import UserPrismaRepository from '@infra/database/prisma/repository/user-prisma.repository';
 import { AudioService } from '@infra/service/audio.service';
+import ChatGPTService from '@infra/service/chatgpt.service';
 import TranscriptionWhisperService from '@infra/service/transcription-whisper.service';
 import CreateUserUsecase from '@usecase/create-user/create-user.usecase';
 import ProcessMessageUsecase from '@usecase/process-message/process-message.usecase';
@@ -41,21 +42,21 @@ app.post('/command', upload.single('Media'), async (req, res) => {
         const outputCreateUser = await createUserUsecase.execute(inputCreateUser);
 
         response = `Hi ${outputCreateUser.profileName}, ${outputCreateUser.response}  
-                          \n Your balance is ${outputCreateUser.balance} credits
-                          \n For each ${audioMinutes} minutes of audio you will be charged 1 credit
-                          \n Now you can send me an audio to start the process!`;
+                    \n Your balance is ${outputCreateUser.balance} credits
+                    \n For each ${audioMinutes} minutes of audio you will be charged 1 credit
+                    \n Now you can send me an audio to start the process!`;
         break;
       }
       case 'balance': {
         response = `Your balance is 10 
-                          \n For each ${audioMinutes} minutes of audio you will be charged 1 credit 
-                          \n Send me an audio to start the process`;
+                    \n For each ${audioMinutes} minutes of audio you will be charged 1 credit 
+                    \n Send me an audio to start the process`;
         break;
       }
       default:
         response = `Hi, Im a bot, follow the list of commmands availble: 
-                          \n register - Register your account
-                          \n balance - Check your balance `;
+                    \n register - Register your account
+                    \n balance - Check your balance `;
         break;
     }
   }
@@ -64,6 +65,14 @@ app.post('/command', upload.single('Media'), async (req, res) => {
   twiML.message(response);
   res.writeHead(200, { 'Content-Type': 'text/json' });
   res.end(twiML.toString());
+});
+
+// endpoint to test the ChatGPTService apart from Other services
+app.get('/summary', (req, res) => {
+  const text = req.body.text;
+  const chatGPT = new ChatGPTService();
+  const summaryAudio = chatGPT.sendMessageToChatGPT(text);
+  res.send(summaryAudio);
 });
 
 
