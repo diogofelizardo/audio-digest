@@ -1,62 +1,102 @@
-# Building Robust Applications with TypeScript and Clean Architecture: An Interview Project
+# Digest Audio Project
+### Project Description
+The Digest Audio Project is an innovative application designed to automatically generate summarized transcripts of WhatsApp voice messages using Twilio, Whisper, and ChatGPT. This project aims to help users save time and stay organized by providing them with a concise and easily accessible overview of the content of their voice messages.
 
-This project is an implementation of a sample application that demonstrates the use of TypeScript and Clean Architecture principles. The goal of this project is to provide an example of how to structure and build a robust and scalable application using these technologies.
+### Features
 
-## Technologies Used
+- Automatic transcription of WhatsApp voice messages using Twilio API
 
-&#9745; TypeScript
+- Audio-to-text conversion using Whisper ASR (Automatic Speech Recognition) system
 
-&#9745; Jest
+- Summarization of transcriptions using ChatGPT language model
 
-&#9744; Express.js or Nest.js
-
-&#9744; PostgreSQL
-
-## TODO List
-
-&#9745; Create Entitys
-
-&#9745; Create UseCases
-
-&#9744; Create notification partner
-
-&#9744; Create database repositories 
-
-&#9744; API Calls using Express.js or Nest.js (to define)
-
-## Installation
-
-To get started with this project, follow these steps:
-
-1. Clone the repository: `git clone https://github.com/diogofelizardo/typescript-clean-architecture-interview.git`
-2. Navigate to the project directory: `cd typescript-clean-architecture-interview`
-3. Install dependencies: `npm i`
-
-## Running the Application
-
-To run the application in development mode, use the following command: `npm run start:dev`
-
-This will start the server and restart it automatically whenever changes are made to the code.
-
-To run the application in production mode, use the following command: `npm run start`
+- Storage and retrieval of summarized transcripts for future reference
 
 
-## Running Tests
 
-To run the tests, use the following command: `npm run test`
+### Prerequisites
 
-This will run all the tests in the project.
+Before you begin, ensure you have met the following requirements:
 
-## Contributing
+A Twilio account with an active phone number and API credentials
 
-If you would like to contribute to this project, please follow these steps:
+Access to Whisper ASR API
 
-1. Fork the repository
-2. Create a new branch: `git checkout -b my-new-feature`
-3. Make your changes and commit them: `git commit -m 'Add some feature'`
-4. Push to the branch: `git push origin my-new-feature`
-5. Submit a pull request
+Access to ChatGPT API
 
-## License
+Node.js (14.x or higher) installed
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+npm (Node Package Manager) installed
+
+### Installation
+
+#### Clone this repository:
+
+```
+bash
+git clone https://github.com/diogofelizardo/audio-digest.git
+```
+
+#### Navigate to the project directory:
+
+```
+bash
+cd audio-digest
+```
+
+#### Install required dependencies:
+
+```
+npm install
+```
+
+#### Compile TypeScript code:
+
+```
+npm run build
+```
+
+### Configuration
+Create a .env file in the project root directory:
+```
+bash
+touch .env
+```
+
+Open .env and add the following environment variables with your Database, and OpenAI API credentials:
+
+```
+DATABASE_URL=postgresql://root:password@localhost:5432/database?schema=public
+OPENAI_API_KEY=your_chatgpt_api_key
+```
+
+### Usage
+
+Run the main script:
+npm run dev
+
+Follow the on-screen instructions to connect your WhatsApp account to the application.
+
+Send a voice message to the Twilio phone number associated with your account.
+
+Wait for the application to process and summarize the audio message.
+
+Check your WhatsApp account for a reply containing the summarized transcript.
+
+### Contributing
+If you would like to contribute to the Digest Audio Project, please follow these steps:
+
+### Fork the repository
+Create a new branch (git checkout -b your-feature-branch)
+Commit your changes (git commit -m 'Add some feature')
+Push to the branch (git push origin your-feature-branch)
+Create a new Pull Request
+
+### License
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+### Contact
+If you have any questions, feel free to reach out to me at:
+
+Email: felizardo.diogo@gmail.com
+Instagram: @diogofelizardo
