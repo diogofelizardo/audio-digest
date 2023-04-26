@@ -1,6 +1,6 @@
 import User from "@domain/user/entity/user";
 import UserRepositoryInterface from "@domain/user/repository/user-repository.interface";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User as UserModel } from "@prisma/client";
 
 export default class UserPrismaRepository implements UserRepositoryInterface {
   private prisma: PrismaClient;
@@ -56,7 +56,7 @@ export default class UserPrismaRepository implements UserRepositoryInterface {
 
   async findAll(): Promise<User[]> {
     const users = this.prisma.user.findMany();
-    const listUsers = (await users).map(user => {
+    const listUsers = (await users).map((user: UserModel) => {
       return new User(user.id, user.profileName || "", user.whatsappId, user.balance, user.createdAt, user.updatedAt);
     });
     return listUsers;
