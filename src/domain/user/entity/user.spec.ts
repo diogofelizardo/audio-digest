@@ -1,4 +1,5 @@
 import Message from "@domain/message/entity/message";
+import MessageProperties from "@domain/message/value-object/message-properties";
 import User from "@domain/user/entity/user";
 
 describe("User", () => {
@@ -13,7 +14,26 @@ describe("User", () => {
       dateNow
     );
 
-    const message = new Message("456", "123", 10, dateNow, dateNow);
+    const properties = new MessageProperties({
+      mediaContentType0: "",
+      smsMessageSid: "",
+      numMedia: "",
+      profileName: "",
+      smsSid: "",
+      waId: "",
+      smsStatus: "",
+      body: "",
+      to: "",
+      numSegments: "",
+      referralNumMedia: "",
+      messageSid: "",
+      accountSid: "",
+      from: "",
+      mediaUrl0: "",
+      apiVersion: ""
+    });
+    const message = new Message("456", "123", properties, dateNow, dateNow);
+
     user.addMessage(message);
 
     expect(user.messages.length).toBe(1);

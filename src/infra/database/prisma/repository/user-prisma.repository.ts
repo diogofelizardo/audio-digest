@@ -1,6 +1,6 @@
 import User from "@domain/user/entity/user";
 import UserRepositoryInterface from "@domain/user/repository/user-repository.interface";
-import { PrismaClient, User as UserModel } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 export default class UserPrismaRepository implements UserRepositoryInterface {
   private prisma: PrismaClient;
@@ -15,8 +15,7 @@ export default class UserPrismaRepository implements UserRepositoryInterface {
         id: entity.id,
         profileName: entity.profileName,
         whatsappId: entity.whatsappId,
-        balance: entity.balance,
-        locale: entity.locale,
+        balance: entity.balance
       }
     });
   }
@@ -52,13 +51,13 @@ export default class UserPrismaRepository implements UserRepositoryInterface {
 
     if (!user) throw new Error('User not found');
 
-    return new User(user.id, user.profileName || "", user.whatsappId, user.locale, user.balance, user.createdAt, user.updatedAt);
+    return new User(user.id, user.profileName || "", user.whatsappId, user.balance, user.createdAt, user.updatedAt);
   }
 
   async findAll(): Promise<User[]> {
     const users = this.prisma.user.findMany();
-    const listUsers = (await users).map((user: UserModel) => {
-      return new User(user.id, user.profileName || "", user.whatsappId, user.locale, user.balance, user.createdAt, user.updatedAt);
+    const listUsers = (await users).map(user => {
+      return new User(user.id, user.profileName || "", user.whatsappId, user.balance, user.createdAt, user.updatedAt);
     });
     return listUsers;
   }
@@ -72,6 +71,6 @@ export default class UserPrismaRepository implements UserRepositoryInterface {
 
     if (!user) return undefined;
 
-    return new User(user.id, user.profileName || "", user.whatsappId, user.locale, user.balance, user.createdAt, user.updatedAt);
+    return new User(user.id, user.profileName || "", user.whatsappId, user.balance, user.createdAt, user.updatedAt);
   }
 }

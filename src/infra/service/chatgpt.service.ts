@@ -1,12 +1,8 @@
-import GPTServiceInterface from '@domain/service/gpt-service.interface';
 import { Configuration, OpenAIApi } from 'openai';
 
-export default class ChatGPTService implements GPTServiceInterface {
-  private model = 'text-davinci-003';
+export default class ChatGPTService {
+  private model = 'text-davinci-002';
   private configuration: Configuration;
-  private temperature = 0.4;
-  private max_tokens = 200;
-  private top_p = 0.5;
 
   constructor() {
     this.configuration = new Configuration({
@@ -14,15 +10,14 @@ export default class ChatGPTService implements GPTServiceInterface {
     });
   }
 
-  async sendMessageToChatGPT(prompt: string, message: string): Promise<string | undefined> {
+  async sendMessageToChatGPT(message: string): Promise<string | undefined> {
     const openai = new OpenAIApi(this.configuration);
+
     const completion = await openai.createCompletion({
-      prompt: `${prompt} ${message}`,
       model: this.model,
-      temperature: this.temperature,
-      max_tokens: this.max_tokens,
-      top_p: this.top_p
+      prompt: `Liste os principais pontos desse texto: ${message}`,
     });
+    console.log(completion.data.choices);
     return completion.data.choices[0].text;
   }
 }

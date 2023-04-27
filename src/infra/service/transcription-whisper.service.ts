@@ -25,6 +25,9 @@ export default class TranscriptionWhisperService implements TranscriptionService
       },
     });
 
+    const data = response.data;
+    console.log({ data })
+
     return response.data.text;
   }
 }
