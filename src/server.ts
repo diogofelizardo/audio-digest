@@ -1,8 +1,11 @@
+import L from '@domain/shared/i18n/i18n-node';
 import UserPrismaRepository from '@infra/database/prisma/repository/user-prisma.repository';
 import { AudioService } from '@infra/service/audio.service';
 import ChatGPTService from '@infra/service/chatgpt.service';
 import TranscriptionWhisperService from '@infra/service/transcription-whisper.service';
 import CreateUserUsecase from '@usecase/create-user/create-user.usecase';
+import DefaultResponseUsecase from '@usecase/default-response/default-response.usecase';
+import GetBalanceUseCase from '@usecase/get-balance/get-balance.usecase';
 import ProcessMessageUsecase from '@usecase/process-message/process-message.usecase';
 import bodyParser from 'body-parser';
 import express from 'express';
@@ -15,49 +18,54 @@ const upload = multer();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-const audioMinutes = 10;
-
 app.post('/command', upload.single('Media'), async (req, res) => {
   const body = req.body;
   let response = '';
 
-  if (body.NumMedia == '1' && body.MediaContentType0 == 'audio/ogg') {
+  if (body.NumMedia == '1' && body.MediaContentType0 == 'audio/ogg' && body.MediaUrl0.length !== 0) {
     const audioService = new AudioService();
     const transcriptionService = new TranscriptionWhisperService();
     const processMessageUsecase = new ProcessMessageUsecase(audioService, transcriptionService);
     const outputProcessMessage = await processMessageUsecase.execute(body);
 
-    response = outputProcessMessage.responseMessage;
-
+    response = outputProcessMessage.response;
   } else {
     const command = body.Body.toLowerCase();
+    const userPrismaRepository = new UserPrismaRepository();
+
     switch (command) {
-      case 'register': {
-        const userPrismaRepository = new UserPrismaRepository();
+      case 'balance': {
+        const getBalanceUseCase = new GetBalanceUseCase(userPrismaRepository);
+        const inputGetBalance = {
+          profileName: body.ProfileName,
+          whatsappId: body.WaId,
+        }
+        const outputGetBalance = await getBalanceUseCase.execute(inputGetBalance);
+        response = outputGetBalance.response;
+        break;
+      }
+      case 'en': case 'pt': case 'es': {
         const createUserUsecase = new CreateUserUsecase(userPrismaRepository);
         const inputCreateUser = {
           profileName: body.ProfileName,
           whatsappId: body.WaId,
+          language: command,
         }
         const outputCreateUser = await createUserUsecase.execute(inputCreateUser);
 
-        response = `Hi ${outputCreateUser.profileName}, ${outputCreateUser.response}  
-                    \n Your balance is ${outputCreateUser.balance} credits
-                    \n For each ${audioMinutes} minutes of audio you will be charged 1 credit
-                    \n Now you can send me an audio to start the process!`;
+        response = outputCreateUser.response;
         break;
       }
-      case 'balance': {
-        response = `Your balance is 10 
-                    \n For each ${audioMinutes} minutes of audio you will be charged 1 credit 
-                    \n Send me an audio to start the process`;
+      default: {
+        const defaultResponseUsecase = new DefaultResponseUsecase(userPrismaRepository);
+        const inputDefaultResponse = {
+          profileName: body.ProfileName,
+          whatsappId: body.WaId,
+        }
+        const outputDefaultResponse = await defaultResponseUsecase.execute(inputDefaultResponse);
+        response = outputDefaultResponse.response;
         break;
       }
-      default:
-        response = `Hi, Im a bot, follow the list of commmands availble: 
-                    \n register - Register your account
-                    \n balance - Check your balance `;
-        break;
     }
   }
 
@@ -71,10 +79,21 @@ app.post('/command', upload.single('Media'), async (req, res) => {
 app.get('/summary', (req, res) => {
   const text = req.body.text;
   const chatGPT = new ChatGPTService();
-  const summaryAudio = chatGPT.sendMessageToChatGPT(text);
-  res.send(summaryAudio);
+  const summaryText = chatGPT.sendMessageToChatGPT(L['en'].audio.prompt(), text);
+  res.send(summaryText);
 });
 
+app.get('/locale', (req, res) => {
+  const en = L['en'].hi({ name: 'John' });
+  const es = L['es'].hi({ name: 'John' });
+  const pt = L['pt'].hi({ name: 'John' });
+  const msg = { en, es, pt };
+  res.send(msg)
+});
+
+app.use((req, res) => {
+  res.sendStatus(404);
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

@@ -15,7 +15,8 @@ export default class UserPrismaRepository implements UserRepositoryInterface {
         id: entity.id,
         profileName: entity.profileName,
         whatsappId: entity.whatsappId,
-        balance: entity.balance
+        balance: entity.balance,
+        locale: entity.locale,
       }
     });
   }
@@ -51,13 +52,13 @@ export default class UserPrismaRepository implements UserRepositoryInterface {
 
     if (!user) throw new Error('User not found');
 
-    return new User(user.id, user.profileName || "", user.whatsappId, user.balance, user.createdAt, user.updatedAt);
+    return new User(user.id, user.profileName || "", user.whatsappId, user.locale, user.balance, user.createdAt, user.updatedAt);
   }
 
   async findAll(): Promise<User[]> {
     const users = this.prisma.user.findMany();
     const listUsers = (await users).map((user: UserModel) => {
-      return new User(user.id, user.profileName || "", user.whatsappId, user.balance, user.createdAt, user.updatedAt);
+      return new User(user.id, user.profileName || "", user.whatsappId, user.locale, user.balance, user.createdAt, user.updatedAt);
     });
     return listUsers;
   }
@@ -71,6 +72,6 @@ export default class UserPrismaRepository implements UserRepositoryInterface {
 
     if (!user) return undefined;
 
-    return new User(user.id, user.profileName || "", user.whatsappId, user.balance, user.createdAt, user.updatedAt);
+    return new User(user.id, user.profileName || "", user.whatsappId, user.locale, user.balance, user.createdAt, user.updatedAt);
   }
 }
