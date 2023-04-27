@@ -2,6 +2,8 @@ import MessageFactory from "@domain/message/factory/message.factory";
 import MessageProperties from "@domain/message/value-object/message-properties";
 import AudioServiceInterface from "@domain/service/audio-service.interface";
 import TranscriptionServiceInterface from "@domain/service/transcription-service.interface";
+import L from "@domain/shared/i18n/i18n-node";
+import Rule from "@domain/shared/rule";
 import SummaryFactory from "@domain/summary/factory/summary.factory";
 import TranscriptionFactory from "@domain/transcription/factory/transcription.factory";
 import MessagePrismaRepository from "@infra/database/prisma/repository/message-prisma.repository";
@@ -20,24 +22,20 @@ export default class ProcessMessageUsecase {
   }
 
   async execute(input: InputMessageDTO): Promise<OutputMessageDTO> {
-    if (input.MediaContentType0 !== 'audio/ogg') {
-      return {
-        responseMessage: `Audio not found, send me an audio to start the process!`
-      };
-    }
-
-    if (input.NumMedia !== '1') {
-      return {
-        responseMessage: `Audio not found, send me an audio to start the process!`
-      };
-    }
-
     const userRepository = new UserPrismaRepository();
     const userFind = await userRepository.findByWhatsappId(input.WaId);
 
     if (!userFind) {
       return {
-        responseMessage: `User not found, send register command!`
+        response: L['en'].hi({ name: input.ProfileName })
+      };
+    }
+
+    if (input.MediaContentType0 !== 'audio/ogg' || input.NumMedia !== '1' || !input.MediaUrl0) {
+      const rule = Rule.getInstance();
+
+      return {
+        response: L[userFind.locale].audio.notfound({ audioMinutes: rule.audioMinutes })
       };
     }
 
@@ -70,21 +68,28 @@ export default class ProcessMessageUsecase {
 
 
       const chatgpt = new ChatGPTService();
-      const audioSummary = await chatgpt.sendMessageToChatGPT(audioTranscription);
+      const audioSummary = await chatgpt.sendMessageToChatGPT(
+        L[userFind.locale].audio.prompt(),
+        audioTranscription
+      );
 
       const summary = SummaryFactory.create(message.id, audioSummary);
       const summaryRepository = new SummaryPrismaRepository();
       await summaryRepository.create(summary);
 
+      if (!audioSummary) {
+        throw new Error('Audio summary not found');
+      }
+
       return {
-        responseMessage:
-          `Your audio has been processed successfully! 
-          \n Summary: ${audioSummary}
-          \n Transcription: ${audioTranscription}
-          \n Now your balance is ${userFind.balance} credits`
+        response: L[userFind.locale].audio.finished({
+          summary: audioSummary,
+          transcription: audioTranscription,
+          balance: userFind.balance,
+        })
       }
     } catch (error) {
-      throw new Error(error as string);
+      throw new Error(`Error processing message : ${(error as Error).message}`);
     } finally {
       this.audioService.cleanup();
     }
