@@ -7,11 +7,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+
 model User {
   id          String   @id @default(uuid())
   profileName String?
   whatsappId  String   @unique
   balance     Int      @default(0)
+  locale      Locales  @default(en)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   messages    Message[]
@@ -60,4 +63,10 @@ model Summary {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   message     Message  @relation(fields: [messageId], references: [id])
+}
+
+enum Locales {
+  en
+  pt
+  es
 }
