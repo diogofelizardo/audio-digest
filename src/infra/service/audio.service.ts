@@ -6,6 +6,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { promisify } from 'util';
+import logger from 'utils/logger';
 import { v4 as uuidv4 } from 'uuid';
 
 const writeFileAsync = promisify(fs.writeFile);
@@ -38,6 +39,7 @@ export class AudioService implements AudioServiceInterface {
 
   getAudioMp3Path(): string {
     if (!this.audioLoaded) {
+      logger.error('Audio file not found, load audio before get path');
       throw new Error('Audio file not found, load audio before get path');
     }
     return this.mp3FilePath;
@@ -45,6 +47,7 @@ export class AudioService implements AudioServiceInterface {
 
   async getAudioDuration(): Promise<number | undefined> {
     if (!this.audioLoaded) {
+      logger.error('Audio file not found, load audio before get duration');
       throw new Error('Audio file not found, load audio before get duration');
     }
 
@@ -52,6 +55,7 @@ export class AudioService implements AudioServiceInterface {
       ffmpeg.ffprobe(this.oggFilePath, (err, metadata) => {
         if (err) {
           this.cleanup();
+          logger.error(`Error while try get audio duration: ${err.message}`);
           reject(err);
         } else {
           resolve(metadata.format.duration);
@@ -62,17 +66,19 @@ export class AudioService implements AudioServiceInterface {
 
   async cleanup(): Promise<void> {
     if (!this.audioLoaded) {
+      logger.error('Audio file not found, load audio before cleanup');
       throw new Error('Audio file not found, load audio before cleanup');
     }
 
     if (this.oggFilePath) {
       await unlinkAsync(this.oggFilePath);
-      this.oggFilePath = "";
+      this.oggFilePath = '';
     }
   }
 
   convertAudioToMp3(): Promise<void> {
     if (!this.audioLoaded) {
+      logger.error('Audio file not found, load audio before convert');
       throw new Error('Audio file not found, load audio before convert');
     }
 
@@ -80,10 +86,12 @@ export class AudioService implements AudioServiceInterface {
       ffmpeg(this.oggFilePath)
         .output(this.mp3FilePath)
         .on('end', () => {
-          resolve(console.log('File converted successfully'));
+          logger.info('File converted successfully');
+          resolve();
         })
         .on('error', (err) => {
-          reject(console.error(`Error while try convert audio: ${err.message}`));
+          logger.error(`Error while try convert audio: ${err.message}`);
+          reject();
         })
         .run();
     });

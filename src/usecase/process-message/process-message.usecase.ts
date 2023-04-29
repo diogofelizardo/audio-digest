@@ -1,3 +1,4 @@
+import AudioFactory from "@domain/audio/factory/audio.factory";
 import MessageFactory from "@domain/message/factory/message.factory";
 import MessageProperties from "@domain/message/value-object/message-properties";
 import AudioServiceInterface from "@domain/service/audio-service.interface";
@@ -6,11 +7,13 @@ import L from "@domain/shared/i18n/i18n-node";
 import SystemRules from "@domain/shared/system-rules";
 import SummaryFactory from "@domain/summary/factory/summary.factory";
 import TranscriptionFactory from "@domain/transcription/factory/transcription.factory";
+import AudioPrismaRepository from "@infra/database/prisma/repository/audio-prisma.repository";
 import MessagePrismaRepository from "@infra/database/prisma/repository/message-prisma.repository";
 import SummaryPrismaRepository from "@infra/database/prisma/repository/summary-prisma.repository";
 import UserPrismaRepository from "@infra/database/prisma/repository/user-prisma.repository";
 import ChatGPTService from "@infra/service/chatgpt.service";
 import { Twilio } from "twilio";
+import logger from 'utils/logger';
 import { InputMessageDTO, OutputMessageDTO } from "./process-message.dto";
 
 export default class ProcessMessageUsecase {
@@ -31,14 +34,14 @@ export default class ProcessMessageUsecase {
 
     if (!findUser) {
       return {
-        response: { text: L['en'].hi({ name: input.ProfileName }) }
+        response: L['en'].hi({ name: input.ProfileName }),
       };
     }
     const { locale: userLocale } = findUser;
 
     if (input.MediaContentType0 !== 'audio/ogg' || input.NumMedia !== '1' || !input.MediaUrl0) {
       return {
-        response: { text: L[userLocale].audio.notfound({ audioMinutes: rules.audioMinutes }) }
+        response: L[findUser.locale].audio.notfound({ audioMinutes: rules.audioMinutes }),
       };
     }
 
@@ -47,18 +50,18 @@ export default class ProcessMessageUsecase {
       await this.audioService.convertAudioToMp3();
       const audioDuration = await this.audioService.getAudioDuration();
       const audioPath = this.audioService.getAudioMp3Path();
+
       if (!audioDuration) {
+        logger.error('Audio duration not found');
         throw new Error('Audio duration not found');
       }
 
       if (!rules.haveEnoughBalance(findUser.balance, audioDuration)) {
         return {
-          response: {
-            text: L[userLocale].user.insufficientBalance({
-              balance: findUser.balance,
-              link: userLocale == 'pt' ? rules.linkBR : rules.linkUSA
-            })
-          }
+          response: L[userLocale].user.insufficientBalance({
+            balance: findUser.balance,
+            link: userLocale == 'pt' ? rules.linkBR : rules.linkUSA
+          })
         }
       }
 
@@ -69,15 +72,35 @@ export default class ProcessMessageUsecase {
       });
 
       const audioTranscription = await this.transcriptionService.transcribeAudio(audioPath);
+
       if (!audioTranscription) {
+        logger.error('Audio transcription not found');
         throw new Error('Audio transcription not found');
       }
+
+      const audioRepository = new AudioPrismaRepository();
+      const audio = AudioFactory.create(input.MessageSid, audioDuration, input.MediaContentType0, input.MediaUrl0);
+      await audioRepository.create(audio);
 
       const messageRepository = new MessagePrismaRepository();
       const message = MessageFactory.createWithProperties(
         findUser.id,
-        audioDuration,
-        new MessageProperties(input)
+        new MessageProperties({
+          SmsMessageSid: input.SmsMessageSid,
+          NumMedia: input.NumMedia,
+          ProfileName: input.ProfileName,
+          SmsSid: input.SmsSid,
+          WaId: input.WaId,
+          SmsStatus: input.SmsStatus,
+          Body: input.Body,
+          To: input.To,
+          NumSegments: input.NumSegments,
+          ReferralNumMedia: input.ReferralNumMedia,
+          MessageSid: input.MessageSid,
+          AccountSid: input.AccountSid,
+          From: input.From,
+          ApiVersion: input.ApiVersion,
+        }),
       );
 
       const transcription = TranscriptionFactory.create(message.id, audioTranscription);
@@ -95,6 +118,7 @@ export default class ProcessMessageUsecase {
       await summaryRepository.create(summary);
 
       if (!audioSummary) {
+        logger.error('Audio summary not found');
         throw new Error('Audio summary not found');
       }
 
@@ -102,17 +126,13 @@ export default class ProcessMessageUsecase {
       userRepository.update(findUser);
 
       return {
-        response: {
-          text: L[userLocale].audio.finished({
-            summary: audioSummary,
-            balance: findUser.balance,
-          }),
-          transcription: L[userLocale].audio.transcription({
-            transcription: audioTranscription
-          }),
-        }
+        response: L[userLocale].audio.finished({
+          summary: audioSummary,
+          balance: findUser.balance,
+        })
       }
     } catch (error) {
+      logger.error(`Error processing message : ${(error as Error).message}`);
       throw new Error(`Error processing message : ${(error as Error).message}`);
     } finally {
       this.audioService.cleanup();

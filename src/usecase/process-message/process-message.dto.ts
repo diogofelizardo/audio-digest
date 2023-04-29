@@ -18,8 +18,5 @@ export type InputMessageDTO = {
 };
 
 export type OutputMessageDTO = {
-  response: {
-    text: string,
-    transcription?: string
-  }
+  response: string;
 };

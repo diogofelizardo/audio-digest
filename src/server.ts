@@ -10,6 +10,7 @@ import express from 'express';
 import multer from 'multer';
 import { Twilio } from 'twilio';
 import MessagingResponse from 'twilio/lib/twiml/MessagingResponse';
+import logger from 'utils/logger';
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
@@ -26,6 +27,7 @@ app.post('/163d357e-29d6-490c-b3c9-ecac0c1a99fa', upload.single('Media'), async 
   const { To, From, NumMedia, MediaContentType0, MediaUrl0, Body, ProfileName, WaId } = req.body;
 
   if (NumMedia == '1' && MediaContentType0 == 'audio/ogg' && MediaUrl0.length !== 0) {
+    logger.info(`User ${WaId} sent an audio!`);
     const audioService = new AudioService();
     const transcriptionService = new TranscriptionWhisperService();
     const processMessageUsecase = new ProcessMessageUsecase(audioService, transcriptionService);
@@ -33,7 +35,7 @@ app.post('/163d357e-29d6-490c-b3c9-ecac0c1a99fa', upload.single('Media'), async 
     const response = outputProcessMessage.response;
 
     twilio.messages.create({
-      body: response.text,
+      body: response,
       from: To,
       to: From
     });
@@ -53,15 +55,18 @@ app.post('/163d357e-29d6-490c-b3c9-ecac0c1a99fa', upload.single('Media'), async 
         response = outputGetBalance.response;
         break;
       }
-      case 'en': case 'pt': case 'es': {
+      case 'en':
+      case 'pt':
+      case 'es': {
         const createUserUsecase = new CreateUserUsecase(userPrismaRepository);
         const inputCreateUser = {
           profileName: ProfileName,
           whatsappId: WaId,
           language: command,
-        }
+        };
         const outputCreateUser = await createUserUsecase.execute(inputCreateUser);
         response = outputCreateUser.response;
+        logger.info(`User ${WaId} created!`);
         break;
       }
       default: {
@@ -72,6 +77,7 @@ app.post('/163d357e-29d6-490c-b3c9-ecac0c1a99fa', upload.single('Media'), async 
         }
         const outputDefaultResponse = await defaultResponseUsecase.execute(inputDefaultResponse);
         response = outputDefaultResponse.response;
+        logger.info(`User ${WaId} sent a message!`);
         break;
       }
     }
@@ -89,5 +95,5 @@ app.use((req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  logger.debug(`Server is running on port ${port}`);
 });
