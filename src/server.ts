@@ -22,7 +22,7 @@ const twilio = new Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUT
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.post('/command', upload.single('Media'), async (req, res) => {
+app.post('/163d357e-29d6-490c-b3c9-ecac0c1a99fa', upload.single('Media'), async (req, res) => {
   const { To, From, NumMedia, MediaContentType0, MediaUrl0, Body, ProfileName, WaId } = req.body;
 
   if (NumMedia == '1' && MediaContentType0 == 'audio/ogg' && MediaUrl0.length !== 0) {
