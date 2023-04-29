@@ -1,5 +1,4 @@
 export default class MessageProperties {
-  readonly mediaContentType0: string;
   readonly smsMessageSid: string;
   readonly numMedia: string;
   readonly profileName: string;
@@ -13,11 +12,9 @@ export default class MessageProperties {
   readonly messageSid: string;
   readonly accountSid: string;
   readonly from: string;
-  readonly mediaUrl0: string;
   readonly apiVersion: string;
 
   constructor(properties: {
-    MediaContentType0: string;
     SmsMessageSid: string;
     NumMedia: string;
     ProfileName: string;
@@ -31,10 +28,8 @@ export default class MessageProperties {
     MessageSid: string;
     AccountSid: string;
     From: string;
-    MediaUrl0: string;
     ApiVersion: string;
   }) {
-    this.mediaContentType0 = properties.MediaContentType0;
     this.smsMessageSid = properties.SmsMessageSid;
     this.numMedia = properties.NumMedia;
     this.profileName = properties.ProfileName;
@@ -48,7 +43,6 @@ export default class MessageProperties {
     this.messageSid = properties.MessageSid;
     this.accountSid = properties.AccountSid;
     this.from = properties.From;
-    this.mediaUrl0 = properties.MediaUrl0;
     this.apiVersion = properties.ApiVersion;
   }
 
