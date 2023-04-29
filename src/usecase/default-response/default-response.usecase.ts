@@ -21,8 +21,20 @@ export default class DefaultResponseUsecase {
 
     const rules = SystemRules.getInstance();
 
-    return {
-      response: L[findUser.locale].user.default({ audioMinutes: rules.audioMinutes })
+    if (findUser.balance > 0) {
+      return {
+        response: L[findUser.locale].user.noBalance({
+          audioMinutes: rules.audioMinutes,
+          link: findUser.locale == 'pt' ? rules.linkBR : rules.linkUSA
+        })
+      }
+    } else {
+      return {
+        response: L[findUser.locale].user.default({
+          audioMinutes: rules.audioMinutes,
+          balance: findUser.balance
+        })
+      }
     }
   }
 }

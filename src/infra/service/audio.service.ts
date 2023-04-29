@@ -1,4 +1,5 @@
 import AudioServiceInterface from '@domain/service/audio-service.interface';
+import ffmpegPath from '@ffmpeg-installer/ffmpeg';
 import axios from 'axios';
 import ffmpeg from 'fluent-ffmpeg';
 import fs from 'fs';
@@ -10,6 +11,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 const writeFileAsync = promisify(fs.writeFile);
 const unlinkAsync = promisify(fs.unlink);
+
+ffmpeg.setFfmpegPath(ffmpegPath.path);
 
 export class AudioService implements AudioServiceInterface {
   private oggFilePath: string;
