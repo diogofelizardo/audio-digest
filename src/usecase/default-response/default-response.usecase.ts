@@ -1,5 +1,5 @@
 import L from "@domain/shared/i18n/i18n-node";
-import Rule from "@domain/shared/rule";
+import SystemRules from "@domain/shared/system-rules";
 import UserRepositoryInterface from "@domain/user/repository/user-repository.interface";
 import { InputDefaultResponseDTO, OutputDefaultResponseDTO } from "./default-response.dto";
 
@@ -19,10 +19,10 @@ export default class DefaultResponseUsecase {
       }
     }
 
-    const rule = Rule.getInstance();
+    const rules = SystemRules.getInstance();
 
     return {
-      response: L[findUser.locale].user.default({ audioMinutes: rule.audioMinutes })
+      response: L[findUser.locale].user.default({ audioMinutes: rules.audioMinutes })
     }
   }
 }

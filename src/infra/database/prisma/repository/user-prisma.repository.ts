@@ -22,19 +22,9 @@ export default class UserPrismaRepository implements UserRepositoryInterface {
   }
 
   async update(entity: User): Promise<void> {
-    const findUser = await this.prisma.user.findFirst({
-      where: {
-        whatsappId: entity.whatsappId
-      }
-    });
-
-    if (!findUser) {
-      throw new Error('User not found');
-    }
-
     await this.prisma.user.update({
       where: {
-        id: findUser.id
+        id: entity.id
       },
       data: {
         balance: entity.balance,

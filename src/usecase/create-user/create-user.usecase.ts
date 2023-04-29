@@ -1,5 +1,5 @@
 import L from "@domain/shared/i18n/i18n-node";
-import Rule from "@domain/shared/rule";
+import SystemRules from "@domain/shared/system-rules";
 import UserFactory from "@domain/user/factory/user.factory";
 import UserRepositoryInterface from "@domain/user/repository/user-repository.interface";
 import { InputCreateUserDTO, OutputCreateUserDTO } from "./create-user.dto";
@@ -13,7 +13,7 @@ export default class CreateUserUsecase {
 
   async execute(input: InputCreateUserDTO): Promise<OutputCreateUserDTO> {
     const findUser = await this.UserRepository.findByWhatsappId(input.whatsappId);
-    const rule = Rule.getInstance();
+    const rules = SystemRules.getInstance();
 
     if (findUser) {
       return {
@@ -23,7 +23,7 @@ export default class CreateUserUsecase {
         response: L[findUser.locale].user.alreadyregistered({
           name: findUser.profileName,
           balance: findUser.balance,
-          audioMinutes: rule.audioMinutes
+          audioMinutes: rules.audioMinutes
         })
       }
     }
@@ -39,7 +39,7 @@ export default class CreateUserUsecase {
       response: L[user.locale].user.created({
         name: user.profileName,
         balance: user.balance,
-        audioMinutes: rule.audioMinutes
+        audioMinutes: rules.audioMinutes
       })
     }
   }

@@ -8,7 +8,7 @@ const pt: Translation = {
 			\n es - Espanhol`,
 	audio: {
 		notfound: `Áudio não encontrado, envie um áudio para iniciar o processo!
-							\n Cada áudio com duração de até {audioMinutes:number} minutos será cobrado 1 crédito.`,
+							\n Será cobrado {audioDuration:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).`,
 		finished: `Seu áudio foi processado com sucesso! 
 							\n Resumo: \n {summary:string} 
 							\n Transcrição: {transcription:string} 
@@ -17,18 +17,18 @@ const pt: Translation = {
 	},
 	user: {
 		balance: `Olá {name:string}! Você tem {balance:number} créditos disponíveis em sua conta.
-						\n Cada áudio com duração de até {audioMinutes:number} minutos será cobrado 1 crédito.
+						\n Será cobrado {audioDuration:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).
 						\n Agora você pode enviar um áudio para iniciar o processo!`,
 		created: `Bem-vindo {name:string}! Sua conta foi criada!
 						\n Você tem {balance:number} créditos disponíveis em sua conta.
-						\n Cada áudio com duração de até {audioMinutes:number} minutos será cobrado 1 crédito.
+						\n Será cobrado {audioDuration:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).
 						\n Agora você pode enviar um áudio para iniciar o processo!`,
 		alreadyregistered: `Bem-vindo {name:string}! Você já está registrado!
 											\n Você tem {balance:number} créditos disponíveis em sua conta.
-											\n Cada áudio com duração de até {audioMinutes:number} minutos será cobrado 1 crédito.
+											\n Será cobrado {audioDuration:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).
 											\n Agora você pode enviar um áudio para iniciar o processo!`,
 		default: `Para iniciar o processo, por favor envie um áudio!
-						\n Cada áudio com duração de até {audioMinutes:number} minutos será cobrado 1 crédito.`
+						\n Será cobrado {audioDuration:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).`
 	}
 }
 
