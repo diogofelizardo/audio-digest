@@ -5,7 +5,7 @@ export default class ChatGPTService implements GPTServiceInterface {
   private model = 'text-davinci-003';
   private configuration: Configuration;
   private temperature = 0.4;
-  private max_tokens = 200;
+  private max_tokens = 700;
   private top_p = 0.5;
 
   constructor() {

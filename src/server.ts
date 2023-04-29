@@ -71,7 +71,7 @@ app.post('/command', upload.single('Media'), async (req, res) => {
 
   const twiML = new MessagingResponse();
   twiML.message(response);
-  res.writeHead(200, { 'Content-Type': 'text/json' });
+  res.writeHead(200, { 'Content-Type': 'text/xml' });
   res.end(twiML.toString());
 });
 

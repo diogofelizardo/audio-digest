@@ -3,7 +3,7 @@ import MessageProperties from "@domain/message/value-object/message-properties";
 import AudioServiceInterface from "@domain/service/audio-service.interface";
 import TranscriptionServiceInterface from "@domain/service/transcription-service.interface";
 import L from "@domain/shared/i18n/i18n-node";
-import Rule from "@domain/shared/rule";
+import SystemRules from "@domain/shared/system-rules";
 import SummaryFactory from "@domain/summary/factory/summary.factory";
 import TranscriptionFactory from "@domain/transcription/factory/transcription.factory";
 import MessagePrismaRepository from "@infra/database/prisma/repository/message-prisma.repository";
@@ -24,6 +24,7 @@ export default class ProcessMessageUsecase {
   async execute(input: InputMessageDTO): Promise<OutputMessageDTO> {
     const userRepository = new UserPrismaRepository();
     const userFind = await userRepository.findByWhatsappId(input.WaId);
+    const rules = SystemRules.getInstance();
 
     if (!userFind) {
       return {
@@ -32,10 +33,8 @@ export default class ProcessMessageUsecase {
     }
 
     if (input.MediaContentType0 !== 'audio/ogg' || input.NumMedia !== '1' || !input.MediaUrl0) {
-      const rule = Rule.getInstance();
-
       return {
-        response: L[userFind.locale].audio.notfound({ audioMinutes: rule.audioMinutes })
+        response: L[userFind.locale].audio.notfound({ audioMinutes: rules.audioMinutes })
       };
     }
 
@@ -46,6 +45,14 @@ export default class ProcessMessageUsecase {
       const audioPath = this.audioService.getAudioMp3Path();
       if (!audioDuration) {
         throw new Error('Audio duration not found');
+      }
+
+      if (!rules.haveEnoughBalance(userFind.balance, audioDuration)) {
+        return {
+          response: L[userFind.locale].user.insufficientBalance({
+            balance: userFind.balance, link: rules.link
+          })
+        }
       }
 
       const audioTranscription = await this.transcriptionService.transcribeAudio(audioPath);
@@ -80,6 +87,9 @@ export default class ProcessMessageUsecase {
       if (!audioSummary) {
         throw new Error('Audio summary not found');
       }
+
+      userFind.subtractBalance(rules.calculateCost(audioDuration));
+      userRepository.update(userFind);
 
       return {
         response: L[userFind.locale].audio.finished({

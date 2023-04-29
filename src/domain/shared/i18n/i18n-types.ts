@@ -34,6 +34,7 @@ export type TranslationFunctions = {
 		created: (arg: { name: string, balance: number, audioMinutes: number }) => LocalizedString,
 		alreadyregistered: (arg: { name: string, balance: number, audioMinutes: number }) => LocalizedString,
 		default: (arg: { audioMinutes: number }) => LocalizedString,
+		insufficientBalance: (arg: { balance: number, link: string }) => LocalizedString,
 	}
 }
 
