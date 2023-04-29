@@ -8,56 +8,73 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   profileName String?
-  whatsappId  String   @unique
-  balance     Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  whatsappId  String    @unique
+  balance     Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   messages    Message[]
 }
 
 model Message {
-  id                  String  @id @default(uuid())
-  audioDuration       Float   @default(0)
-  userId              String
-  mediaContentType0   String
-  smsMessageSid       String
-  numMedia            String
-  profileName         String
-  smsSid              String
-  waId                String
-  smsStatus           String
-  body                String
-  to                  String
-  numSegments         String
-  referralNumMedia    String
-  messageSid          String
-  accountSid          String
-  from                String
-  mediaUrl0           String
-  apiVersion          String
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  user                User     @relation(fields: [userId], references: [id])
-  transcription       Transcription?
-  summary             Summary?
+  id               String         @id @default(uuid())
+  userId           String
+  smsMessageSid    String
+  numMedia         String
+  profileName      String
+  smsSid           String
+  waId             String
+  smsStatus        String
+  body             String
+  to               String
+  numSegments      String
+  referralNumMedia String
+  messageSid       String
+  accountSid       String
+  from             String
+  apiVersion       String
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  user             User           @relation(fields: [userId], references: [id])
+  transcription    Transcription?
+  summary          Summary?
+  audio            Audio?
 }
 
 model Transcription {
-  id          String   @id @default(uuid())
-  messageId   String   @unique
-  text        String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  message     Message  @relation(fields: [messageId], references: [id])
+  id        String   @id @default(uuid())
+  messageId String   @unique
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  message   Message  @relation(fields: [messageId], references: [id])
 }
 
 model Summary {
-  id          String   @id @default(uuid())
-  messageId   String   @unique
-  text        String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  message     Message  @relation(fields: [messageId], references: [id])
+  id        String   @id @default(uuid())
+  messageId String   @unique
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  message   Message  @relation(fields: [messageId], references: [id])
+}
+
+model Audio {
+  id                String   @id @default(uuid())
+  messageId         String   @unique
+  audioDuration     Float    @default(0)
+  mediaContentType0 String
+  mediaUrl0         String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  message           Message  @relation(fields: [messageId], references: [id])
+}
+
+model Logger {
+  id        String   @id @default(uuid())
+  message   String
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

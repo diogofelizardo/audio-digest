@@ -7,6 +7,7 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import multer from 'multer';
 import MessagingResponse from 'twilio/lib/twiml/MessagingResponse';
+import logger from 'utils/logger';
 
 const app = express();
 const upload = multer();
@@ -27,7 +28,6 @@ app.post('/command', upload.single('Media'), async (req, res) => {
     const outputProcessMessage = await processMessageUsecase.execute(body);
 
     response = outputProcessMessage.responseMessage;
-
   } else {
     const command = body.Body.toLowerCase();
     switch (command) {
@@ -37,7 +37,7 @@ app.post('/command', upload.single('Media'), async (req, res) => {
         const inputCreateUser = {
           profileName: body.ProfileName,
           whatsappId: body.WaId,
-        }
+        };
         const outputCreateUser = await createUserUsecase.execute(inputCreateUser);
 
         response = `Hi ${outputCreateUser.profileName}, ${outputCreateUser.response}  
@@ -66,8 +66,7 @@ app.post('/command', upload.single('Media'), async (req, res) => {
   res.end(twiML.toString());
 });
 
-
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  logger.info(`Server is running on port ${port}`);
 });
