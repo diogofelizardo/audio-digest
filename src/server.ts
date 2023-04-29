@@ -11,6 +11,7 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import multer from 'multer';
 import MessagingResponse from 'twilio/lib/twiml/MessagingResponse';
+import logger from 'utils/logger';
 
 const app = express();
 const upload = multer();
@@ -39,18 +40,20 @@ app.post('/command', upload.single('Media'), async (req, res) => {
         const inputGetBalance = {
           profileName: body.ProfileName,
           whatsappId: body.WaId,
-        }
+        };
         const outputGetBalance = await getBalanceUseCase.execute(inputGetBalance);
         response = outputGetBalance.response;
         break;
       }
-      case 'en': case 'pt': case 'es': {
+      case 'en':
+      case 'pt':
+      case 'es': {
         const createUserUsecase = new CreateUserUsecase(userPrismaRepository);
         const inputCreateUser = {
           profileName: body.ProfileName,
           whatsappId: body.WaId,
           language: command,
-        }
+        };
         const outputCreateUser = await createUserUsecase.execute(inputCreateUser);
 
         response = outputCreateUser.response;
@@ -61,7 +64,7 @@ app.post('/command', upload.single('Media'), async (req, res) => {
         const inputDefaultResponse = {
           profileName: body.ProfileName,
           whatsappId: body.WaId,
-        }
+        };
         const outputDefaultResponse = await defaultResponseUsecase.execute(inputDefaultResponse);
         response = outputDefaultResponse.response;
         break;
@@ -88,7 +91,7 @@ app.get('/locale', (req, res) => {
   const es = L['es'].hi({ name: 'John' });
   const pt = L['pt'].hi({ name: 'John' });
   const msg = { en, es, pt };
-  res.send(msg)
+  res.send(msg);
 });
 
 app.use((req, res) => {
@@ -97,5 +100,5 @@ app.use((req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  logger.info(`Server is running on port ${port}`);
 });

@@ -1,16 +1,18 @@
-import MessageFactory from "@domain/message/factory/message.factory";
-import MessageProperties from "@domain/message/value-object/message-properties";
-import AudioServiceInterface from "@domain/service/audio-service.interface";
-import TranscriptionServiceInterface from "@domain/service/transcription-service.interface";
-import L from "@domain/shared/i18n/i18n-node";
-import SystemRules from "@domain/shared/system-rules";
-import SummaryFactory from "@domain/summary/factory/summary.factory";
-import TranscriptionFactory from "@domain/transcription/factory/transcription.factory";
-import MessagePrismaRepository from "@infra/database/prisma/repository/message-prisma.repository";
-import SummaryPrismaRepository from "@infra/database/prisma/repository/summary-prisma.repository";
-import UserPrismaRepository from "@infra/database/prisma/repository/user-prisma.repository";
-import ChatGPTService from "@infra/service/chatgpt.service";
-import { InputMessageDTO, OutputMessageDTO } from "./process-message.dto";
+import MessageFactory from '@domain/message/factory/message.factory';
+import MessageProperties from '@domain/message/value-object/message-properties';
+import AudioServiceInterface from '@domain/service/audio-service.interface';
+import TranscriptionServiceInterface from '@domain/service/transcription-service.interface';
+import L from '@domain/shared/i18n/i18n-node';
+import SystemRules from '@domain/shared/system-rules';
+import SummaryFactory from '@domain/summary/factory/summary.factory';
+import TranscriptionFactory from '@domain/transcription/factory/transcription.factory';
+import MessagePrismaRepository from '@infra/database/prisma/repository/message-prisma.repository';
+import SummaryPrismaRepository from '@infra/database/prisma/repository/summary-prisma.repository';
+import UserPrismaRepository from '@infra/database/prisma/repository/user-prisma.repository';
+import ChatGPTService from '@infra/service/chatgpt.service';
+import { InputMessageDTO, OutputMessageDTO } from './process-message.dto';
+import AudioPrismaRepository from '@infra/database/prisma/repository/audio-prisma.repository';
+import AudioFactory from '@domain/audio/factory/audio.factory';
 
 export default class ProcessMessageUsecase {
   private audioService: AudioServiceInterface;
@@ -28,13 +30,13 @@ export default class ProcessMessageUsecase {
 
     if (!userFind) {
       return {
-        response: L['en'].hi({ name: input.ProfileName })
+        response: L['en'].hi({ name: input.ProfileName }),
       };
     }
 
     if (input.MediaContentType0 !== 'audio/ogg' || input.NumMedia !== '1' || !input.MediaUrl0) {
       return {
-        response: L[userFind.locale].audio.notfound({ audioMinutes: rules.audioMinutes })
+        response: L[userFind.locale].audio.notfound({ audioMinutes: rules.audioMinutes }),
       };
     }
 
@@ -43,6 +45,7 @@ export default class ProcessMessageUsecase {
       await this.audioService.convertAudioToMp3();
       const audioDuration = await this.audioService.getAudioDuration();
       const audioPath = this.audioService.getAudioMp3Path();
+
       if (!audioDuration) {
         throw new Error('Audio duration not found');
       }
@@ -50,22 +53,41 @@ export default class ProcessMessageUsecase {
       if (!rules.haveEnoughBalance(userFind.balance, audioDuration)) {
         return {
           response: L[userFind.locale].user.insufficientBalance({
-            balance: userFind.balance, link: rules.link
-          })
-        }
+            balance: userFind.balance,
+            link: rules.link,
+          }),
+        };
       }
 
       const audioTranscription = await this.transcriptionService.transcribeAudio(audioPath);
+
       if (!audioTranscription) {
         throw new Error('Audio transcription not found');
       }
 
+      const audioRepository = new AudioPrismaRepository();
+      const audio = AudioFactory.create(input.MessageSid, audioDuration, input.MediaContentType0, input.MediaUrl0);
+      await audioRepository.create(audio);
 
       const messageRepository = new MessagePrismaRepository();
       const message = MessageFactory.createWithProperties(
         userFind.id,
-        audioDuration,
-        new MessageProperties(input)
+        new MessageProperties({
+          SmsMessageSid: input.SmsMessageSid,
+          NumMedia: input.NumMedia,
+          ProfileName: input.ProfileName,
+          SmsSid: input.SmsSid,
+          WaId: input.WaId,
+          SmsStatus: input.SmsStatus,
+          Body: input.Body,
+          To: input.To,
+          NumSegments: input.NumSegments,
+          ReferralNumMedia: input.ReferralNumMedia,
+          MessageSid: input.MessageSid,
+          AccountSid: input.AccountSid,
+          From: input.From,
+          ApiVersion: input.ApiVersion,
+        }),
       );
 
       const transcription = TranscriptionFactory.create(message.id, audioTranscription);
@@ -73,12 +95,8 @@ export default class ProcessMessageUsecase {
       message.setTranscription(transcription);
       await messageRepository.create(message);
 
-
       const chatgpt = new ChatGPTService();
-      const audioSummary = await chatgpt.sendMessageToChatGPT(
-        L[userFind.locale].audio.prompt(),
-        audioTranscription
-      );
+      const audioSummary = await chatgpt.sendMessageToChatGPT(L[userFind.locale].audio.prompt(), audioTranscription);
 
       const summary = SummaryFactory.create(message.id, audioSummary);
       const summaryRepository = new SummaryPrismaRepository();
@@ -96,8 +114,8 @@ export default class ProcessMessageUsecase {
           summary: audioSummary,
           transcription: audioTranscription,
           balance: userFind.balance,
-        })
-      }
+        }),
+      };
     } catch (error) {
       throw new Error(`Error processing message : ${(error as Error).message}`);
     } finally {

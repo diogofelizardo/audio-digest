@@ -64,7 +64,7 @@ export class AudioService implements AudioServiceInterface {
 
     if (this.oggFilePath) {
       await unlinkAsync(this.oggFilePath);
-      this.oggFilePath = "";
+      this.oggFilePath = '';
     }
   }
 
@@ -72,6 +72,8 @@ export class AudioService implements AudioServiceInterface {
     if (!this.audioLoaded) {
       throw new Error('Audio file not found, load audio before convert');
     }
+
+    console.log(`Converting audio from ${this.oggFilePath} to ${this.mp3FilePath}`);
 
     return new Promise((resolve, reject) => {
       ffmpeg(this.oggFilePath)
