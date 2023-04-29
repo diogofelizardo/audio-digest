@@ -1,7 +1,5 @@
-import L from '@domain/shared/i18n/i18n-node';
 import UserPrismaRepository from '@infra/database/prisma/repository/user-prisma.repository';
 import { AudioService } from '@infra/service/audio.service';
-import ChatGPTService from '@infra/service/chatgpt.service';
 import TranscriptionWhisperService from '@infra/service/transcription-whisper.service';
 import CreateUserUsecase from '@usecase/create-user/create-user.usecase';
 import DefaultResponseUsecase from '@usecase/default-response/default-response.usecase';
@@ -10,35 +8,46 @@ import ProcessMessageUsecase from '@usecase/process-message/process-message.usec
 import bodyParser from 'body-parser';
 import express from 'express';
 import multer from 'multer';
+import { Twilio } from 'twilio';
 import MessagingResponse from 'twilio/lib/twiml/MessagingResponse';
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 const app = express();
 const upload = multer();
+const twilio = new Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.post('/command', upload.single('Media'), async (req, res) => {
-  const body = req.body;
-  let response = '';
+  const { To, From, NumMedia, MediaContentType0, MediaUrl0, Body, ProfileName, WaId } = req.body;
 
-  if (body.NumMedia == '1' && body.MediaContentType0 == 'audio/ogg' && body.MediaUrl0.length !== 0) {
+  if (NumMedia == '1' && MediaContentType0 == 'audio/ogg' && MediaUrl0.length !== 0) {
     const audioService = new AudioService();
     const transcriptionService = new TranscriptionWhisperService();
     const processMessageUsecase = new ProcessMessageUsecase(audioService, transcriptionService);
-    const outputProcessMessage = await processMessageUsecase.execute(body);
+    const outputProcessMessage = await processMessageUsecase.execute(req.body);
+    const response = outputProcessMessage.response;
 
-    response = outputProcessMessage.response;
+    twilio.messages.create({
+      body: response.text,
+      from: To,
+      to: From
+    });
   } else {
-    const command = body.Body.toLowerCase();
+    const command = Body.toLowerCase();
     const userPrismaRepository = new UserPrismaRepository();
+    var response: string;
 
     switch (command) {
       case 'balance': {
         const getBalanceUseCase = new GetBalanceUseCase(userPrismaRepository);
         const inputGetBalance = {
-          profileName: body.ProfileName,
-          whatsappId: body.WaId,
+          profileName: ProfileName,
+          whatsappId: WaId,
         }
         const outputGetBalance = await getBalanceUseCase.execute(inputGetBalance);
         response = outputGetBalance.response;
@@ -47,48 +56,31 @@ app.post('/command', upload.single('Media'), async (req, res) => {
       case 'en': case 'pt': case 'es': {
         const createUserUsecase = new CreateUserUsecase(userPrismaRepository);
         const inputCreateUser = {
-          profileName: body.ProfileName,
-          whatsappId: body.WaId,
+          profileName: ProfileName,
+          whatsappId: WaId,
           language: command,
         }
         const outputCreateUser = await createUserUsecase.execute(inputCreateUser);
-
         response = outputCreateUser.response;
         break;
       }
       default: {
         const defaultResponseUsecase = new DefaultResponseUsecase(userPrismaRepository);
         const inputDefaultResponse = {
-          profileName: body.ProfileName,
-          whatsappId: body.WaId,
+          profileName: ProfileName,
+          whatsappId: WaId,
         }
         const outputDefaultResponse = await defaultResponseUsecase.execute(inputDefaultResponse);
         response = outputDefaultResponse.response;
         break;
       }
     }
+
+    const twiML = new MessagingResponse();
+    twiML.message(response);
+    res.writeHead(200, { 'Content-Type': 'text/xml' });
+    res.end(twiML.toString());
   }
-
-  const twiML = new MessagingResponse();
-  twiML.message(response);
-  res.writeHead(200, { 'Content-Type': 'text/xml' });
-  res.end(twiML.toString());
-});
-
-// endpoint to test the ChatGPTService apart from Other services
-app.get('/summary', (req, res) => {
-  const text = req.body.text;
-  const chatGPT = new ChatGPTService();
-  const summaryText = chatGPT.sendMessageToChatGPT(L['en'].audio.prompt(), text);
-  res.send(summaryText);
-});
-
-app.get('/locale', (req, res) => {
-  const en = L['en'].hi({ name: 'John' });
-  const es = L['es'].hi({ name: 'John' });
-  const pt = L['pt'].hi({ name: 'John' });
-  const msg = { en, es, pt };
-  res.send(msg)
 });
 
 app.use((req, res) => {

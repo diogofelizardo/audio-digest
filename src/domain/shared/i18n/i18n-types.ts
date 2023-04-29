@@ -26,15 +26,18 @@ export type TranslationFunctions = {
 	hi: (arg: { name: string }) => LocalizedString,
 	audio: {
 		notfound: (arg: { audioMinutes: number }) => LocalizedString,
-		finished: (arg: { summary: string, transcription: string, balance: number }) => LocalizedString,
+		finished: (arg: { summary: string, balance: number }) => LocalizedString,
+		transcription: (arg: { transcription: string }) => LocalizedString,
+		started: () => LocalizedString,
 		prompt: () => LocalizedString,
 	},
 	user: {
 		balance: (arg: { name: string, balance: number }) => LocalizedString,
 		created: (arg: { name: string, balance: number, audioMinutes: number }) => LocalizedString,
 		alreadyregistered: (arg: { name: string, balance: number, audioMinutes: number }) => LocalizedString,
-		default: (arg: { audioMinutes: number }) => LocalizedString,
+		default: (arg: { audioMinutes: number, balance: number }) => LocalizedString,
 		insufficientBalance: (arg: { balance: number, link: string }) => LocalizedString,
+		noBalance: (arg: { audioMinutes: number, link: string }) => LocalizedString,
 	}
 }
 

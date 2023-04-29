@@ -10,31 +10,35 @@ import MessagePrismaRepository from "@infra/database/prisma/repository/message-p
 import SummaryPrismaRepository from "@infra/database/prisma/repository/summary-prisma.repository";
 import UserPrismaRepository from "@infra/database/prisma/repository/user-prisma.repository";
 import ChatGPTService from "@infra/service/chatgpt.service";
+import { Twilio } from "twilio";
 import { InputMessageDTO, OutputMessageDTO } from "./process-message.dto";
 
 export default class ProcessMessageUsecase {
   private audioService: AudioServiceInterface;
   private transcriptionService: TranscriptionServiceInterface;
+  private twilio: Twilio;
 
   constructor(audioService: AudioServiceInterface, transcriptionService: TranscriptionServiceInterface) {
     this.audioService = audioService;
     this.transcriptionService = transcriptionService;
+    this.twilio = new Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
   }
 
   async execute(input: InputMessageDTO): Promise<OutputMessageDTO> {
     const userRepository = new UserPrismaRepository();
-    const userFind = await userRepository.findByWhatsappId(input.WaId);
+    const findUser = await userRepository.findByWhatsappId(input.WaId);
     const rules = SystemRules.getInstance();
 
-    if (!userFind) {
+    if (!findUser) {
       return {
-        response: L['en'].hi({ name: input.ProfileName })
+        response: { text: L['en'].hi({ name: input.ProfileName }) }
       };
     }
+    const { locale: userLocale } = findUser;
 
     if (input.MediaContentType0 !== 'audio/ogg' || input.NumMedia !== '1' || !input.MediaUrl0) {
       return {
-        response: L[userFind.locale].audio.notfound({ audioMinutes: rules.audioMinutes })
+        response: { text: L[userLocale].audio.notfound({ audioMinutes: rules.audioMinutes }) }
       };
     }
 
@@ -47,36 +51,42 @@ export default class ProcessMessageUsecase {
         throw new Error('Audio duration not found');
       }
 
-      if (!rules.haveEnoughBalance(userFind.balance, audioDuration)) {
+      if (!rules.haveEnoughBalance(findUser.balance, audioDuration)) {
         return {
-          response: L[userFind.locale].user.insufficientBalance({
-            balance: userFind.balance, link: rules.link
-          })
+          response: {
+            text: L[userLocale].user.insufficientBalance({
+              balance: findUser.balance,
+              link: userLocale == 'pt' ? rules.linkBR : rules.linkUSA
+            })
+          }
         }
       }
+
+      this.twilio.messages.create({
+        body: L[userLocale].audio.started(),
+        from: input.To,
+        to: input.From
+      });
 
       const audioTranscription = await this.transcriptionService.transcribeAudio(audioPath);
       if (!audioTranscription) {
         throw new Error('Audio transcription not found');
       }
 
-
       const messageRepository = new MessagePrismaRepository();
       const message = MessageFactory.createWithProperties(
-        userFind.id,
+        findUser.id,
         audioDuration,
         new MessageProperties(input)
       );
 
       const transcription = TranscriptionFactory.create(message.id, audioTranscription);
-
       message.setTranscription(transcription);
       await messageRepository.create(message);
 
-
       const chatgpt = new ChatGPTService();
       const audioSummary = await chatgpt.sendMessageToChatGPT(
-        L[userFind.locale].audio.prompt(),
+        L[userLocale].audio.prompt(),
         audioTranscription
       );
 
@@ -88,15 +98,19 @@ export default class ProcessMessageUsecase {
         throw new Error('Audio summary not found');
       }
 
-      userFind.subtractBalance(rules.calculateCost(audioDuration));
-      userRepository.update(userFind);
+      findUser.subtractBalance(rules.calculateCost(audioDuration));
+      userRepository.update(findUser);
 
       return {
-        response: L[userFind.locale].audio.finished({
-          summary: audioSummary,
-          transcription: audioTranscription,
-          balance: userFind.balance,
-        })
+        response: {
+          text: L[userLocale].audio.finished({
+            summary: audioSummary,
+            balance: findUser.balance,
+          }),
+          transcription: L[userLocale].audio.transcription({
+            transcription: audioTranscription
+          }),
+        }
       }
     } catch (error) {
       throw new Error(`Error processing message : ${(error as Error).message}`);
