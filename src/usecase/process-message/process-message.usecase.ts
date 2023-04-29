@@ -13,6 +13,7 @@ import ChatGPTService from '@infra/service/chatgpt.service';
 import { InputMessageDTO, OutputMessageDTO } from './process-message.dto';
 import AudioPrismaRepository from '@infra/database/prisma/repository/audio-prisma.repository';
 import AudioFactory from '@domain/audio/factory/audio.factory';
+import logger from 'utils/logger';
 
 export default class ProcessMessageUsecase {
   private audioService: AudioServiceInterface;
@@ -47,6 +48,7 @@ export default class ProcessMessageUsecase {
       const audioPath = this.audioService.getAudioMp3Path();
 
       if (!audioDuration) {
+        logger.error('Audio duration not found');
         throw new Error('Audio duration not found');
       }
 
@@ -62,6 +64,7 @@ export default class ProcessMessageUsecase {
       const audioTranscription = await this.transcriptionService.transcribeAudio(audioPath);
 
       if (!audioTranscription) {
+        logger.error('Audio transcription not found');
         throw new Error('Audio transcription not found');
       }
 
@@ -103,6 +106,7 @@ export default class ProcessMessageUsecase {
       await summaryRepository.create(summary);
 
       if (!audioSummary) {
+        logger.error('Audio summary not found');
         throw new Error('Audio summary not found');
       }
 
@@ -117,6 +121,7 @@ export default class ProcessMessageUsecase {
         }),
       };
     } catch (error) {
+      logger.error(`Error processing message : ${(error as Error).message}`);
       throw new Error(`Error processing message : ${(error as Error).message}`);
     } finally {
       this.audioService.cleanup();

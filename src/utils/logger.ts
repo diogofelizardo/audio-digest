@@ -1,7 +1,7 @@
 import { addColors, createLogger, format, transports } from 'winston';
 import LoggerTest from './loggerTransport';
 
-const { combine, timestamp, printf, colorize, prettyPrint } = format;
+const { combine, timestamp, printf, colorize, prettyPrint, json } = format;
 
 const myFormat = printf(({ level, message, timestamp }) => {
   return `${timestamp} | ${level} | ${message}`;
@@ -9,24 +9,22 @@ const myFormat = printf(({ level, message, timestamp }) => {
 
 const myCustomLevels = {
   levels: {
-    emerg: 0,
-    alert: 1,
-    crit: 2,
-    error: 3,
-    warning: 4,
-    notice: 5,
-    info: 6,
-    debug: 7,
+    error: 0,
+    warn: 1,
+    info: 2,
+    http: 3,
+    verbose: 4,
+    debug: 5,
+    silly: 6,
   },
   colors: {
-    emerg: 'bold red',
-    alert: 'bold yellow',
-    crit: 'bold red',
     error: 'bold red',
-    warning: 'bold yellow',
-    notice: 'bold green',
+    warn: 'bold yellow',
     info: 'bold green',
+    http: 'bold blue',
+    verbose: 'bold cyan',
     debug: 'bold blue',
+    silly: 'bold white',
   },
 };
 
@@ -36,11 +34,13 @@ export default createLogger({
   levels: myCustomLevels.levels,
   transports: [
     new transports.Console({
+      level: 'silly',
       format: combine(
         format((info) => {
           info.level = info.level.toUpperCase();
           return info;
         })(),
+        json(),
         colorize(),
         timestamp({
           format: 'YYYY-MM-DD HH:mm:ss.SSS',
@@ -50,11 +50,13 @@ export default createLogger({
       ),
     }),
     new LoggerTest({
+      level: 'silly',
       format: combine(
-        format((info) => {
-          info.level = info.level.toUpperCase();
-          return info;
+        format((debug) => {
+          debug.level = debug.level.toUpperCase();
+          return debug;
         })(),
+        json(),
         timestamp(),
       ),
     }),

@@ -1,6 +1,6 @@
-import Message from "@domain/message/entity/message";
-import Entity from "@domain/shared/entity";
-import { Locales } from "@domain/shared/i18n/i18n-types";
+import Message from '@domain/message/entity/message';
+import Entity from '@domain/shared/entity';
+import { Locales } from '@domain/shared/i18n/i18n-types';
 
 export default class User extends Entity {
   private _profileName: string;
@@ -70,5 +70,4 @@ export default class User extends Entity {
   get updatedAt(): Date {
     return this._updatedAt;
   }
-
 }

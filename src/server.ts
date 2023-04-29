@@ -24,6 +24,7 @@ app.post('/command', upload.single('Media'), async (req, res) => {
   let response = '';
 
   if (body.NumMedia == '1' && body.MediaContentType0 == 'audio/ogg' && body.MediaUrl0.length !== 0) {
+    logger.info(`User ${body.WaId} sent an audio!`);
     const audioService = new AudioService();
     const transcriptionService = new TranscriptionWhisperService();
     const processMessageUsecase = new ProcessMessageUsecase(audioService, transcriptionService);
@@ -57,6 +58,9 @@ app.post('/command', upload.single('Media'), async (req, res) => {
         const outputCreateUser = await createUserUsecase.execute(inputCreateUser);
 
         response = outputCreateUser.response;
+
+        logger.info(`User ${body.WaId} created!`);
+
         break;
       }
       default: {
@@ -67,6 +71,9 @@ app.post('/command', upload.single('Media'), async (req, res) => {
         };
         const outputDefaultResponse = await defaultResponseUsecase.execute(inputDefaultResponse);
         response = outputDefaultResponse.response;
+
+        logger.info(`User ${body.WaId} sent a message!`);
+
         break;
       }
     }
@@ -100,5 +107,5 @@ app.use((req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  logger.info(`Server is running on port ${port}`);
+  logger.debug(`Server is running on port ${port}`);
 });
