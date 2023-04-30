@@ -1,6 +1,8 @@
+
 export type InputCreateUserDTO = {
   profileName: string,
-  whatsappId: string
+  whatsappId: string,
+  language: 'en' | 'pt' | 'es'
 };
 
 export type OutputCreateUserDTO = {

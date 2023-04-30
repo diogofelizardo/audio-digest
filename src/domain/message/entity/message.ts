@@ -1,3 +1,4 @@
+import Audio from "@domain/audio/entity/audio";
 import Entity from "@domain/shared/entity";
 import Summary from "@domain/summary/entity/summary";
 import Transcription from "@domain/transcription/entity/transcription";
@@ -5,10 +6,10 @@ import MessageProperties from "../value-object/message-properties";
 
 export default class Message extends Entity {
   private _userId: string;
-  private _audioDuration: number;
   private _properties!: MessageProperties;
   private _transcription!: Transcription;
   private _summary!: Summary;
+  private _audio!: Audio;
   private _createdAt: Date;
   private _updatedAt: Date;
 
@@ -16,14 +17,12 @@ export default class Message extends Entity {
   constructor(
     id: string,
     userId: string,
-    audioDuration: number,
     createdAt: Date,
     updatedAt: Date,
   ) {
     super();
     this._id = id;
     this._userId = userId;
-    this._audioDuration = audioDuration;
     this._createdAt = createdAt;
     this._updatedAt = updatedAt;
   }
@@ -44,6 +43,10 @@ export default class Message extends Entity {
     return this._summary;
   }
 
+  get audio(): Audio {
+    return this._audio;
+  }
+
   get createdAt(): Date {
     return this._createdAt;
   }
@@ -52,8 +55,9 @@ export default class Message extends Entity {
     return this._updatedAt;
   }
 
-  get audioDuration(): number {
-    return this._audioDuration;
+  setAudio(audio: Audio) {
+    this._audio = audio;
+    this._updatedAt = new Date();
   }
 
   setTranscription(transcription: Transcription) {
