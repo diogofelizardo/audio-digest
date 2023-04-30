@@ -1,11 +1,11 @@
 {
    "name": "audio-digest",
    "version": "1.0.0",
-   "main": "src/main.ts",
+   "main": "api/server.js",
    "scripts": {
       "dev": "nodemon",
-      "build": "rimraf ./build && tsc -p tsconfig.build.json",
-      "start": "nodemon build/server.js",
+      "build": "rimraf ./api && tsc -p tsconfig.build.json",
+      "start": "tsc api/server.js",
       "lint": "eslint . --ext .ts",
       "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
       "test": "jest",
@@ -63,6 +63,7 @@
       "openai": "^3.2.1",
       "pg": "^8.4.0",
       "reflect-metadata": "^0.1.13",
+      "tsc-alias": "^1.8.6",
       "twilio": "^4.10.0",
       "typesafe-i18n": "^5.24.3",
       "uuid": "^9.0.0",
@@ -78,7 +79,7 @@
       "watch": [
          "src"
       ],
-      "exec": "nodemon -e ts,js --exec ts-node -r tsconfig-paths/register ./src/server.ts",
+      "exec": "nodemon -e ts,js --exec ts-node -r tsconfig-paths/register ./api/server.js",
       "ext": "ts, js"
    }
 }
