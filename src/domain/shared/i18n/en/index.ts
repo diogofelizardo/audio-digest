@@ -10,11 +10,11 @@ const en: BaseTranslation = {
 		prompt: `List the main points of this text:`,
 	},
 	user: {
-		balance: `Hey {name:string}! You have {balance:number} credits available in your account.\n{audioMinutes:number} credit will be charged per minute of audio sent (rounded to the nearest second).\nNow you can send me an audio to start the process!`,
-		created: `Welcome {name:string}! your account has been created!\nYou have {balance:number} credits available in your account.\n{audioMinutes:number} credit will be charged per minute of audio sent (rounded to the nearest second).\nNow you can send me an audio to start the process!`,
+		balance: `Hey {name:string}! You have {balance:number} credits available in your account.\n{audioMinutes:number} credit will be charged per minute of audio sent (rounded to the nearest second).\nNow you can send me an audio to start the process!\n\nIf you want to add more credits, please access the link: {link:string}`,
+		created: `Welcome {name:string}!\nYou have {balance:number} credits available in your account.\n{audioMinutes:number} credit will be charged per minute of audio sent (rounded to the nearest second).\nNow you can send me an audio to start the process!`,
 		alreadyregistered: `Welcome {name:string}! you are already registered!\nYou have {balance:number} credits available in your account.\n{audioMinutes:number} credit will be charged per minute of audio sent (rounded to the nearest second).\nNow you can send me an audio to start the process!`,
 		insufficientBalance: `You have no suficient balance for that process.\nYour balance is {balance:number} credits\nIf you want to add more credits, please access the link: {link:string}`,
-		default: `To start the process, please send an audio!\n{audioMinutes:number} credit will be charged per minute of audio sent (rounded to the nearest second).\nTienes {balance:number} créditos disponibles en tu cuenta.`,
+		default: `To start the process, please send an audio!\n{audioMinutes:number} credit will be charged per minute of audio sent (rounded to the nearest second).\nYou have {balance:number} available credits in your account.`,
 		noBalance: `You have no suficient balance.\nIf you want to add more credits, please access the link: {link:string}`,
 	}
 }
