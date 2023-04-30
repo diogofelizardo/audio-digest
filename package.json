@@ -4,14 +4,15 @@
    "main": "api/server.js",
    "scripts": {
       "dev": "nodemon",
-      "build": "rm -rf ./api && tsc -p tsconfig.build.json && tsc-alias",
+      "build": "npm run prisma:deploy && rm -rf ./api && tsc -p tsconfig.build.json && tsc-alias",
       "start": "node .",
       "lint": "eslint . --ext .ts",
       "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
       "test": "jest",
       "prisma:generate": "prisma generate --schema=./src/infra/database/prisma/schema.prisma",
       "prisma:migrate": "prisma migrate dev --schema=./src/infra/database/prisma/schema.prisma --name",
-      "prisma:studio": "prisma studio --schema=./src/infra/database/prisma/schema.prisma"
+      "prisma:studio": "prisma studio --schema=./src/infra/database/prisma/schema.prisma",
+      "prisma:deploy": "prisma generate --schema=./src/infra/database/prisma/schema.prisma && prisma migrate deploy --schema=./src/infra/database/prisma/schema.prisma"
    },
    "keywords": [],
    "author": "",
