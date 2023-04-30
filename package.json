@@ -5,14 +5,14 @@
    "scripts": {
       "dev": "nodemon",
       "build": "rimraf ./build && tsc -p tsconfig.build.json",
-      "start": "ts-node src/index.ts",
+      "start": "nodemon build/server.js",
       "lint": "eslint . --ext .ts",
       "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
       "test": "jest",
       "prisma:generate": "prisma generate --schema=./src/infra/database/prisma/schema.prisma",
       "prisma:migrate": "prisma migrate dev --schema=./src/infra/database/prisma/schema.prisma --name",
       "prisma:studio": "prisma studio --schema=./src/infra/database/prisma/schema.prisma",
-      "vercel-build": "npm run build && prisma generate --schema=./src/infra/database/prisma/schema.prisma && prisma migrate deploy --schema=./src/infra/database/prisma/schema.prisma"
+      "vercel-build": "prisma generate --schema=./src/infra/database/prisma/schema.prisma && prisma migrate deploy --schema=./src/infra/database/prisma/schema.prisma &&  tsc -p tsconfig.build.json"
    },
    "build": {
       "files": [
