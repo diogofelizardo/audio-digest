@@ -4,7 +4,7 @@
    "main": "dist/server.js",
    "scripts": {
       "dev": "nodemon",
-      "build": "rm -rf ./dist && tsc -p tsconfig.build.json && tsc-alias && npm run prisma:deploy",
+      "build": "npm run prisma:deploy && rm -rf ./dist && tsc -p tsconfig.build.json && tsc-alias",
       "start": "node .",
       "lint": "eslint . --ext .ts",
       "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
