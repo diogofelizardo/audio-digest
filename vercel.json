@@ -3,14 +3,14 @@
   "name": "audio-digest",
   "builds": [
     {
-      "src": "src/server.ts",
+      "src": "build/server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "(.*)",
-      "dest": "src/server.ts"
+      "dest": "build/server.js"
     }
   ],
   "build": {
