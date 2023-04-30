@@ -14,11 +14,6 @@
       "prisma:studio": "prisma studio --schema=./src/infra/database/prisma/schema.prisma",
       "vercel-build": "npm run build && prisma generate --schema=./src/infra/database/prisma/schema.prisma && prisma migrate deploy --schema=./src/infra/database/prisma/schema.prisma"
    },
-   "build": {
-      "files": [
-         "node_modules/ffmpeg-static/ffmpeg"
-      ]
-   },
    "keywords": [],
    "author": "",
    "license": "ISC",
