@@ -5,7 +5,7 @@
    "type": "commonjs",
    "scripts": {
       "dev": "nodemon api/index.js",
-      "build": "rimraf ./api && tsc -p tsconfig.build.json",
+      "build": "rimraf ./api && tsc -p tsconfig.build.json && tsc-alias",
       "start": "nodemon .",
       "lint": "eslint . --ext .ts",
       "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
@@ -65,7 +65,6 @@
       "openai": "^3.2.1",
       "pg": "^8.4.0",
       "reflect-metadata": "^0.1.13",
-      "tsc-alias": "^1.8.6",
       "twilio": "^4.10.0",
       "typesafe-i18n": "^5.24.3",
       "uuid": "^9.0.0",
