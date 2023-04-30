@@ -5,7 +5,7 @@
    "scripts": {
       "dev": "nodemon",
       "build": "rimraf ./api && tsc -p tsconfig.build.json && tsc-alias",
-      "start": "nodemon .",
+      "start": "node .",
       "lint": "eslint . --ext .ts",
       "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
       "test": "jest",
