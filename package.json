@@ -3,7 +3,7 @@
    "version": "1.0.0",
    "main": "api/server.js",
    "scripts": {
-      "dev": "nodemon api/index.js",
+      "dev": "nodemon",
       "build": "rimraf ./api && tsc -p tsconfig.build.json && tsc-alias",
       "start": "nodemon .",
       "lint": "eslint . --ext .ts",
