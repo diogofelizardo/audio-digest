@@ -7,7 +7,6 @@ import L from "@domain/shared/i18n/i18n-node";
 import SystemRules from "@domain/shared/system-rules";
 import SummaryFactory from "@domain/summary/factory/summary.factory";
 import TranscriptionFactory from "@domain/transcription/factory/transcription.factory";
-import AudioPrismaRepository from "@infra/database/prisma/repository/audio-prisma.repository";
 import MessagePrismaRepository from "@infra/database/prisma/repository/message-prisma.repository";
 import SummaryPrismaRepository from "@infra/database/prisma/repository/summary-prisma.repository";
 import UserPrismaRepository from "@infra/database/prisma/repository/user-prisma.repository";
@@ -78,10 +77,6 @@ export default class ProcessMessageUsecase {
         throw new Error('Audio transcription not found');
       }
 
-      const audioRepository = new AudioPrismaRepository();
-      const audio = AudioFactory.create(input.MessageSid, audioDuration, input.MediaContentType0, input.MediaUrl0);
-      await audioRepository.create(audio);
-
       const messageRepository = new MessagePrismaRepository();
       const message = MessageFactory.createWithProperties(
         findUser.id,
@@ -103,8 +98,12 @@ export default class ProcessMessageUsecase {
         }),
       );
 
+      const audio = AudioFactory.create(message.id, audioDuration, input.MediaContentType0, input.MediaUrl0);
+      message.setAudio(audio);
+
       const transcription = TranscriptionFactory.create(message.id, audioTranscription);
       message.setTranscription(transcription);
+
       await messageRepository.create(message);
 
       const chatgpt = new ChatGPTService();
