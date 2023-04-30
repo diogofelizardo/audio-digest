@@ -18,5 +18,5 @@ export type InputMessageDTO = {
 };
 
 export type OutputMessageDTO = {
-  responseMessage: string,
+  response: string;
 };

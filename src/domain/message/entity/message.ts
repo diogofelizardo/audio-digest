@@ -16,14 +16,12 @@ export default class Message extends Entity {
   constructor(
     id: string,
     userId: string,
-    audioDuration: number,
     createdAt: Date,
     updatedAt: Date,
   ) {
     super();
     this._id = id;
     this._userId = userId;
-    this._audioDuration = audioDuration;
     this._createdAt = createdAt;
     this._updatedAt = updatedAt;
   }
@@ -50,10 +48,6 @@ export default class Message extends Entity {
 
   get updatedAt(): Date {
     return this._updatedAt;
-  }
-
-  get audioDuration(): number {
-    return this._audioDuration;
   }
 
   setTranscription(transcription: Transcription) {

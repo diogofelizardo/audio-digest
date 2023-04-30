@@ -2,72 +2,98 @@ import UserPrismaRepository from '@infra/database/prisma/repository/user-prisma.
 import { AudioService } from '@infra/service/audio.service';
 import TranscriptionWhisperService from '@infra/service/transcription-whisper.service';
 import CreateUserUsecase from '@usecase/create-user/create-user.usecase';
+import DefaultResponseUsecase from '@usecase/default-response/default-response.usecase';
+import GetBalanceUseCase from '@usecase/get-balance/get-balance.usecase';
 import ProcessMessageUsecase from '@usecase/process-message/process-message.usecase';
 import bodyParser from 'body-parser';
 import express from 'express';
 import multer from 'multer';
+import { Twilio } from 'twilio';
 import MessagingResponse from 'twilio/lib/twiml/MessagingResponse';
+import logger from 'utils/logger';
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 const app = express();
 const upload = multer();
+const twilio = new Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-const audioMinutes = 10;
+app.post('/163d357e-29d6-490c-b3c9-ecac0c1a99fa', upload.single('Media'), async (req, res) => {
+  const { To, From, NumMedia, MediaContentType0, MediaUrl0, Body, ProfileName, WaId } = req.body;
 
-app.post('/command', upload.single('Media'), async (req, res) => {
-  const body = req.body;
-  let response = '';
-
-  if (body.NumMedia == '1' && body.MediaContentType0 == 'audio/ogg') {
+  if (NumMedia == '1' && MediaContentType0 == 'audio/ogg' && MediaUrl0.length !== 0) {
+    logger.info(`User ${WaId} sent an audio!`);
     const audioService = new AudioService();
     const transcriptionService = new TranscriptionWhisperService();
     const processMessageUsecase = new ProcessMessageUsecase(audioService, transcriptionService);
-    const outputProcessMessage = await processMessageUsecase.execute(body);
+    const outputProcessMessage = await processMessageUsecase.execute(req.body);
+    const response = outputProcessMessage.response;
 
-    response = outputProcessMessage.responseMessage;
-
+    twilio.messages.create({
+      body: response,
+      from: To,
+      to: From
+    });
   } else {
-    const command = body.Body.toLowerCase();
+    const command = Body.toLowerCase();
+    const userPrismaRepository = new UserPrismaRepository();
+    var response: string;
+
     switch (command) {
-      case 'register': {
-        const userPrismaRepository = new UserPrismaRepository();
+      case 'balance': {
+        const getBalanceUseCase = new GetBalanceUseCase(userPrismaRepository);
+        const inputGetBalance = {
+          profileName: ProfileName,
+          whatsappId: WaId,
+        }
+        const outputGetBalance = await getBalanceUseCase.execute(inputGetBalance);
+        response = outputGetBalance.response;
+        break;
+      }
+      case 'en':
+      case 'pt':
+      case 'es': {
         const createUserUsecase = new CreateUserUsecase(userPrismaRepository);
         const inputCreateUser = {
-          profileName: body.ProfileName,
-          whatsappId: body.WaId,
-        }
+          profileName: ProfileName,
+          whatsappId: WaId,
+          language: command,
+        };
         const outputCreateUser = await createUserUsecase.execute(inputCreateUser);
-
-        response = `Hi ${outputCreateUser.profileName}, ${outputCreateUser.response}  
-                          \n Your balance is ${outputCreateUser.balance} credits
-                          \n For each ${audioMinutes} minutes of audio you will be charged 1 credit
-                          \n Now you can send me an audio to start the process!`;
+        response = outputCreateUser.response;
+        logger.info(`User ${WaId} created!`);
         break;
       }
-      case 'balance': {
-        response = `Your balance is 10 
-                          \n For each ${audioMinutes} minutes of audio you will be charged 1 credit 
-                          \n Send me an audio to start the process`;
+      default: {
+        const defaultResponseUsecase = new DefaultResponseUsecase(userPrismaRepository);
+        const inputDefaultResponse = {
+          profileName: ProfileName,
+          whatsappId: WaId,
+        }
+        const outputDefaultResponse = await defaultResponseUsecase.execute(inputDefaultResponse);
+        response = outputDefaultResponse.response;
+        logger.info(`User ${WaId} sent a message!`);
         break;
       }
-      default:
-        response = `Hi, Im a bot, follow the list of commmands availble: 
-                          \n register - Register your account
-                          \n balance - Check your balance `;
-        break;
     }
-  }
 
-  const twiML = new MessagingResponse();
-  twiML.message(response);
-  res.writeHead(200, { 'Content-Type': 'text/json' });
-  res.end(twiML.toString());
+    const twiML = new MessagingResponse();
+    twiML.message(response);
+    res.writeHead(200, { 'Content-Type': 'text/xml' });
+    res.end(twiML.toString());
+  }
 });
 
+app.use((req, res) => {
+  res.sendStatus(404);
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  logger.debug(`Server is running on port ${port}`);
 });
