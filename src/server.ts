@@ -89,6 +89,10 @@ app.post('/163d357e-29d6-490c-b3c9-ecac0c1a99fa', upload.single('Media'), async 
   }
 });
 
+app.get('/health', (req, res) => {
+  res.sendStatus(200);
+});
+
 app.use((req, res) => {
   res.sendStatus(404);
 });
