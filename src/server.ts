@@ -93,6 +93,10 @@ app.get('/health', (req, res) => {
   res.sendStatus(200);
 });
 
+app.get('/', (req, res) => {
+  res.end('Hello World!');
+});
+
 app.use((req, res) => {
   res.sendStatus(404);
 });
