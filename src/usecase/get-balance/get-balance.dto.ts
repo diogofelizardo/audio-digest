@@ -1,2 +1,7 @@
-export type InputGetBalanceDTO = any;
-export type OutputGetBalanceDTO = any;
+export type InputGetBalanceDTO = {
+  profileName: string;
+  whatsappId: string;
+};
+export type OutputGetBalanceDTO = {
+  response: string;
+};

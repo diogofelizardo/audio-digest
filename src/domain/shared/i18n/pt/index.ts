@@ -10,8 +10,8 @@ const pt: Translation = {
 		prompt: `Liste os principais pontos desse texto:`,
 	},
 	user: {
-		balance: `Olá {name:string}! Você tem {balance:number} créditos disponíveis em sua conta.\nSerá cobrado {audioMinutes:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).\nAgora você pode enviar um áudio para iniciar o processo!`,
-		created: `Bem-vindo {name:string}! Sua conta foi criada!\nVocê tem {balance:number} créditos disponíveis em sua conta.\nSerá cobrado {audioMinutes:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).\nAgora você pode enviar um áudio para iniciar o processo!`,
+		balance: `Olá {name:string}! Você tem {balance:number} créditos disponíveis em sua conta.\nSerá cobrado {audioMinutes:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).\nAgora você pode enviar um áudio para iniciar o processo!\n\nSe deseja adicionar mais créditos, por favor acesse o link: {link:string}`,
+		created: `Bem-vindo {name:string}!\nVocê tem {balance:number} créditos disponíveis em sua conta.\nSerá cobrado {audioMinutes:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).\nAgora você pode enviar um áudio para iniciar o processo!`,
 		alreadyregistered: `Bem-vindo {name:string}! Você já está registrado!\nVocê tem {balance:number} créditos disponíveis em sua conta.\nSerá cobrado {audioMinutes:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).\nAgora você pode enviar um áudio para iniciar o processo!`,
 		insufficientBalance: `Você não possui saldo suficiente para esse processo.\nSeu saldo é de {balance:number} créditos\nSe deseja adicionar mais créditos, por favor acesse o link: {link:string}`,
 		default: `Para iniciar o processo, por favor envie um áudio!\nSerá cobrado {audioMinutes:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).\nSeu saldo é de {balance:number} créditos`,
