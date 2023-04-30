@@ -2,7 +2,6 @@
    "name": "audio-digest",
    "version": "1.0.0",
    "main": "api/server.js",
-   "type": "commonjs",
    "scripts": {
       "dev": "nodemon api/index.js",
       "build": "rimraf ./api && tsc -p tsconfig.build.json && tsc-alias",
