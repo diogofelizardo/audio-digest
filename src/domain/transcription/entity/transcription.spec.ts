@@ -1,17 +1,40 @@
-import Transcription from "./transcription";
+import Transcription from './transcription';
 
+describe('Transcription', () => {
+  const id = 'transcription-id';
+  const messageId = 'message-id';
+  const createdAt = new Date();
+  const updatedAt = new Date();
+  const text = 'Hello, world!';
 
-describe("Transcription entity", () => {
-  it("should create a new transcription object", () => {
-    const transcription = new Transcription("123", "Hello world!");
-    expect(transcription).toBeInstanceOf(Transcription);
-    expect(transcription.text).toBe("Hello world!");
+  let transcription: Transcription;
+
+  beforeEach(() => {
+    transcription = new Transcription(id, messageId, createdAt, updatedAt, text);
   });
 
-  it("should update transcription text and updatedAt when calling setTranscription method", () => {
-    const transcription = new Transcription("123", "Hello world!");
-    transcription.setTranscription = "Updated text";
-    expect(transcription.text).toBe("Updated text");
-    expect(transcription.updatedAt).not.toBe(transcription.createdAt);
+  describe('constructor', () => {
+    it('should create a transcription with the correct properties', () => {
+      expect(transcription.id).toEqual(id);
+      expect(transcription.messageId).toEqual(messageId);
+      expect(transcription.createdAt).toEqual(createdAt);
+      expect(transcription.updatedAt).toEqual(updatedAt);
+      expect(transcription.text).toEqual(text);
+    });
+
+    it('should create a transcription with an empty text if not provided', () => {
+      const transcriptionWithoutText = new Transcription(id, messageId, createdAt, updatedAt);
+      expect(transcriptionWithoutText.text).toEqual('');
+    });
+  });
+
+  describe('setText', () => {
+    it('should set the text property and update the updatedAt property', () => {
+      const newText = 'Goodbye, world!';
+      const previousUpdatedAt = transcription.updatedAt.getTime();
+      transcription.setText = newText;
+      expect(transcription.text).toEqual(newText);
+      expect(transcription.updatedAt.getTime()).toBeGreaterThan(previousUpdatedAt);
+    });
   });
 });

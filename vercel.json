@@ -1,11 +1,21 @@
 {
-  "version": "2",
-  "builds": {
-    "src": "src/server.ts",
-    "use": "@vercel/node"
-  },
-  "routers": {
-    "src": "(.*)",
-    "dest": "src/server.ts"
+  "version": 2,
+  "name": "audio-digest",
+  "builds": [
+    {
+      "src": "src/server.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/src/server.ts"
+    }
+  ],
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
+    }
   }
 }
