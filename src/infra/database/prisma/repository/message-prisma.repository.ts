@@ -31,23 +31,35 @@ export default class MessagePrismaRepository implements MessageRepositoryInterfa
         updatedAt: entity.updatedAt,
         transcription: entity.transcription
           ? {
-              create: {
-                id: entity.transcription.id,
-                text: entity.transcription.text,
-                createdAt: entity.transcription.createdAt,
-                updatedAt: entity.transcription.updatedAt,
-              },
-            }
+            create: {
+              id: entity.transcription.id,
+              text: entity.transcription.text,
+              createdAt: entity.transcription.createdAt,
+              updatedAt: entity.transcription.updatedAt,
+            },
+          }
           : undefined,
         summary: entity.summary
           ? {
-              create: {
-                id: entity.summary.id,
-                text: entity.summary.text,
-                createdAt: entity.summary.createdAt,
-                updatedAt: entity.summary.updatedAt,
-              },
-            }
+            create: {
+              id: entity.summary.id,
+              text: entity.summary.text,
+              createdAt: entity.summary.createdAt,
+              updatedAt: entity.summary.updatedAt,
+            },
+          }
+          : undefined,
+        audio: entity.audio
+          ? {
+            create: {
+              id: entity.audio.id,
+              audioDuration: entity.audio.audioDuration,
+              mediaContentType0: entity.audio.mediaContentType0,
+              mediaUrl0: entity.audio.mediaUrl0,
+              createdAt: entity.audio.createdAt,
+              updatedAt: entity.audio.updatedAt,
+            },
+          }
           : undefined,
         user: {
           connect: {

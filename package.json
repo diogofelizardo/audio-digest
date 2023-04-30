@@ -3,8 +3,7 @@
    "version": "1.0.0",
    "main": "src/main.ts",
    "scripts": {
-      "dev": "npm run killport && nodemon",
-      "killport": "npx kill-port 3000",
+      "dev": "nodemon",
       "build": "rimraf ./build && tsc -p tsconfig.build.json",
       "start": "ts-node src/index.ts",
       "lint": "eslint . --ext .ts",
@@ -12,8 +11,7 @@
       "test": "jest",
       "prisma:generate": "prisma generate --schema=./src/infra/database/prisma/schema.prisma",
       "prisma:migrate": "prisma migrate dev --schema=./src/infra/database/prisma/schema.prisma --name",
-      "prisma:studio": "prisma studio --schema=./src/infra/database/prisma/schema.prisma",
-      "typesafe-i18n": "typesafe-i18n"
+      "prisma:studio": "prisma studio --schema=./src/infra/database/prisma/schema.prisma"
    },
    "build": {
       "files": [

@@ -87,9 +87,13 @@ Check your WhatsApp account for a reply containing the summarized transcript.
 If you would like to contribute to the Digest Audio Project, please follow these steps:
 
 ### Fork the repository
+
 Create a new branch (git checkout -b your-feature-branch)
+
 Commit your changes (git commit -m 'Add some feature')
+
 Push to the branch (git push origin your-feature-branch)
+
 Create a new Pull Request
 
 ### License

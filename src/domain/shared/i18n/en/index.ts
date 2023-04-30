@@ -4,7 +4,7 @@ const en: BaseTranslation = {
 	hi: `Hello {name:string}!\nI'm a bot to assist you. Kindly select one of the following languages for our conversation:\nen - English\npt - Português\nes - Spanish`,
 	audio: {
 		notfound: `Audio not found, send me an audio to start the process!\n{audioMinutes:number} credit will be charged per minute of audio sent (rounded to the nearest second).`,
-		finished: `Your audio has been processed successfully!\nAudio Summary:\n{summary:string}\nNow your balance is {balance:number} credits`,
+		finished: `Your audio has been processed successfully!\n\nAudio Summary:\n{summary:string}\n\nNow your balance is {balance:number} credits`,
 		transcription: `Audio Transcription: {transcription:string}`,
 		started: `Your audio is being processed, please wait a few seconds!`,
 		prompt: `List the main points of this text:`,

@@ -4,7 +4,7 @@ const es: Translation = {
 	hi: `¡Hola {name:string}!\nSoy un bot para ayudarte. Por favor, elige uno de los siguientes idiomas para nuestra conversación:\nen - Inglés\npt - Portugués\nes - Español`,
 	audio: {
 		notfound: `Audio no encontrado, ¡envíame un audio para comenzar el proceso!\nSe cobrará {audioMinutes:number} crédito por cada minuto de audio enviado (con redondeo al segundo más cercano).`,
-		finished: `¡Su audio ha sido procesado exitosamente!\nResumen de audio:\n{summary:string}\nAhora su saldo es de {balance:number} créditos`,
+		finished: `¡Su audio ha sido procesado exitosamente!\n\nResumen de audio:\n{summary:string}\n\nAhora su saldo es de {balance:number} créditos`,
 		transcription: `Transcripción de audio: {transcription:string}`,
 		started: `¡Su audio se está procesando, espere unos segundos!`,
 		prompt: `Enumere los puntos principales de este texto:`,
