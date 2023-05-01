@@ -40,6 +40,8 @@ app.post('/163d357e-29d6-490c-b3c9-ecac0c1a99fa', upload.single('Media'), async 
       from: To,
       to: From
     });
+
+    res.send(response);
   } else {
     const command = Body.toLowerCase();
     const userPrismaRepository = new UserPrismaRepository();
