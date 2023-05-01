@@ -1,12 +1,13 @@
 import Audio from '@domain/audio/entity/audio';
 import AudioRepositoryInterface from '@domain/audio/repository/audio-repository.interface';
 import { PrismaClient } from '@prisma/client';
+import prisma from '../lib/prisma';
 
 export default class AudioPrismaRepository implements AudioRepositoryInterface {
   private prisma: PrismaClient;
 
   constructor() {
-    this.prisma = new PrismaClient();
+    this.prisma = prisma;
   }
 
   async create(entity: Audio): Promise<void> {

@@ -1,12 +1,13 @@
 import Logger from '@domain/logger/entity/logger';
 import LoggerRepositoryInterface from '@domain/logger/repository/logger-repository.interface';
 import { PrismaClient } from '@prisma/client';
+import prisma from '../lib/prisma';
 
 export default class LoggerPrismaRepository implements LoggerRepositoryInterface {
   private prisma: PrismaClient;
 
   constructor() {
-    this.prisma = new PrismaClient();
+    this.prisma = prisma;
   }
 
   async create(entity: Logger): Promise<void> {

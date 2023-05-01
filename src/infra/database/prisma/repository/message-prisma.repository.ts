@@ -1,12 +1,13 @@
 import Message from '@domain/message/entity/message';
 import MessageRepositoryInterface from '@domain/message/repository/message-repository.interface';
 import { PrismaClient } from '@prisma/client';
+import prisma from '../lib/prisma';
 
 export default class MessagePrismaRepository implements MessageRepositoryInterface {
   private prisma: PrismaClient;
 
   constructor() {
-    this.prisma = new PrismaClient();
+    this.prisma = prisma;
   }
 
   async create(entity: Message): Promise<void> {
