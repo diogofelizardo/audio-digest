@@ -1,7 +1,7 @@
 import { Translation } from "../i18n-types";
 
 const pt: Translation = {
-	hi: `Olá {name:string}!\nEu sou um robô para ajudá-lo. Por favor, escolha um dos seguintes idiomas para nossa conversa:\nen - Inglês\npt - Português\nes - Espanhol`,
+	hi: `Olá {name:string}!\nEu sou um bot desenvolvido para transformar áudio em texto resumido para você. Com a minha ajuda, você pode obter um resumo preciso e conciso do que foi dito no áudio sem precisar ouvir todo o conteúdo. Por favor, escolha um dos seguintes idiomas para nossa conversa:\nDigite\n- en para Inglês\n- pt para Português\n- es para Espanhol`,
 	audio: {
 		notfound: `Áudio não encontrado, envie um áudio para iniciar o processo!\nSerá cobrado {audioMinutes:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).`,
 		finished: `Seu áudio foi processado com sucesso!\n\nResumo do áudio:\n{summary:string}\n\nAgora seu saldo é de {balance:number} créditos`,
@@ -13,8 +13,8 @@ const pt: Translation = {
 		balance: `Olá {name:string}! Você tem {balance:number} créditos disponíveis em sua conta.\nSerá cobrado {audioMinutes:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).\nAgora você pode enviar um áudio para iniciar o processo!\n\nSe deseja adicionar mais créditos, por favor acesse o link: {link:string}`,
 		created: `Bem-vindo {name:string}!\nVocê tem {balance:number} créditos disponíveis em sua conta.\nSerá cobrado {audioMinutes:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).\nAgora você pode enviar um áudio para iniciar o processo!`,
 		alreadyregistered: `Bem-vindo {name:string}! Você já está registrado!\nVocê tem {balance:number} créditos disponíveis em sua conta.\nSerá cobrado {audioMinutes:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).\nAgora você pode enviar um áudio para iniciar o processo!`,
-		insufficientBalance: `Você não possui saldo suficiente para esse processo.\nSeu saldo é de {balance:number} créditos\nSe deseja adicionar mais créditos, por favor acesse o link: {link:string}`,
-		default: `Para iniciar o processo, por favor envie um áudio!\nSerá cobrado {audioMinutes:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).\nSeu saldo é de {balance:number} créditos`,
+		insufficientBalance: `Você não possui saldo suficiente para esse processo.\n\nSeu saldo é de {balance:number} créditos\n\nSe deseja adicionar mais créditos, por favor acesse o link: {link:string}`,
+		default: `Para iniciar o processo, por favor envie um áudio!\nSerá cobrado {audioMinutes:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).\n\nSeu saldo é de {balance:number} créditos\n\nSe deseja adicionar mais créditos, por favor acesse o link: {link:string}`,
 		noBalance: `Você esta sem saldo.\nSe você quiser adicionar mais créditos, acesse o link: {link:string}`,
 	}
 }

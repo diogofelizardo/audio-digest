@@ -32,7 +32,8 @@ export default class DefaultResponseUsecase {
       return {
         response: L[findUser.locale].user.default({
           audioMinutes: rules.audioMinutes,
-          balance: findUser.balance
+          balance: findUser.balance,
+          link: findUser.locale == 'pt' ? rules.linkBR : rules.linkUSA
         })
       }
     }

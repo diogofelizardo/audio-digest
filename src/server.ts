@@ -1,3 +1,4 @@
+import L from '@domain/shared/i18n/i18n-node';
 import UserPrismaRepository from '@infra/database/prisma/repository/user-prisma.repository';
 import { AudioService } from '@infra/service/audio.service';
 import TranscriptionWhisperService from '@infra/service/transcription-whisper.service';
@@ -39,6 +40,8 @@ app.post('/163d357e-29d6-490c-b3c9-ecac0c1a99fa', upload.single('Media'), async 
       from: To,
       to: From
     });
+
+    res.send(response);
   } else {
     const command = Body.toLowerCase();
     const userPrismaRepository = new UserPrismaRepository();
@@ -97,11 +100,21 @@ app.get('/', (req, res) => {
   res.end('Hello World!');
 });
 
+app.get('/en', (req, res) => {
+  res.send(L['en'].hi({ name: 'John Doe' }));
+});
+app.get('/es', (req, res) => {
+  res.send(L['es'].hi({ name: 'John Doe' }));
+});
+app.get('/pt', (req, res) => {
+  res.send(L['pt'].hi({ name: 'John Doe' }));
+});
+
 app.use((req, res) => {
   res.sendStatus(404);
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 app.listen(port, () => {
   logger.debug(`Server is running on port ${port}`);
 });
