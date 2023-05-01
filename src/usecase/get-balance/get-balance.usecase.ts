@@ -26,6 +26,7 @@ export default class GetBalanceUseCase {
       response: L[findUser.locale].user.balance({
         name: input.profileName,
         balance: findUser.balance,
+        audioMinutes: rules.audioMinutes,
         link: findUser.locale == 'pt' ? rules.linkBR : rules.linkUSA
       })
     };

@@ -32,7 +32,7 @@ export type TranslationFunctions = {
 		prompt: () => LocalizedString,
 	},
 	user: {
-		balance: (arg: { name: string, balance: number, link: string }) => LocalizedString,
+		balance: (arg: { name: string, balance: number, audioMinutes: number, link: string }) => LocalizedString,
 		created: (arg: { name: string, balance: number, audioMinutes: number }) => LocalizedString,
 		alreadyregistered: (arg: { name: string, balance: number, audioMinutes: number }) => LocalizedString,
 		default: (arg: { audioMinutes: number, balance: number, link: string }) => LocalizedString,
