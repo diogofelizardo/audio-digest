@@ -129,8 +129,7 @@ export default class ProcessMessageUsecase {
       return {
         response: L[userLocale].audio.finished({
           summary: audioSummary,
-          balance: findUser.balance,
-          link: userLocale == 'pt' ? rules.linkBR : rules.linkUSA
+          balance: findUser.balance
         })
       }
     } catch (error) {

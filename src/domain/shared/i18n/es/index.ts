@@ -4,7 +4,7 @@ const es: Translation = {
 	hi: `¡Hola {name:string}!\nSoy un bot desarrollado para ayudarte a convertir audio en texto resumido. Con mi ayuda, puedes obtener un resumen preciso y conciso de lo que se dijo en el audio sin tener que escuchar todo el contenido. Por favor, elige uno de los siguientes idiomas para nuestra conversación:\nEscribe\n- en para inglés\n- pt para portugués\n- es para español`,
 	audio: {
 		notfound: `Audio no encontrado, ¡envíame un audio para comenzar el proceso!\nSe cobrará {audioMinutes:number} crédito por cada minuto de audio enviado (con redondeo al segundo más cercano).`,
-		finished: `¡Su audio ha sido procesado exitosamente!\n\nResumen de audio:\n{summary:string}\n\nAhora su saldo es de {balance:number} créditos\n\nSi desea agregar más créditos, acceda al enlace: {link:string}`,
+		finished: `¡Su audio ha sido procesado exitosamente!\n\nResumen de audio:\n{summary:string}\n\nAhora su saldo es de {balance:number} créditos`,
 		transcription: `Transcripción de audio: {transcription:string}`,
 		started: `¡Su audio se está procesando, espere unos segundos!`,
 		prompt: `Enumere los puntos principales de este texto:`,

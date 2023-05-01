@@ -26,7 +26,7 @@ export type TranslationFunctions = {
 	hi: (arg: { name: string }) => LocalizedString,
 	audio: {
 		notfound: (arg: { audioMinutes: number }) => LocalizedString,
-		finished: (arg: { summary: string, balance: number, link: string }) => LocalizedString,
+		finished: (arg: { summary: string, balance: number }) => LocalizedString,
 		transcription: (arg: { transcription: string }) => LocalizedString,
 		started: () => LocalizedString,
 		prompt: () => LocalizedString,
