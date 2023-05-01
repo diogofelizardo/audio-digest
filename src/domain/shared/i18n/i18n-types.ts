@@ -26,7 +26,7 @@ export type TranslationFunctions = {
 	hi: (arg: { name: string }) => LocalizedString,
 	audio: {
 		notfound: (arg: { audioMinutes: number }) => LocalizedString,
-		finished: (arg: { summary: string, balance: number }) => LocalizedString,
+		finished: (arg: { summary: string, balance: number, link: string }) => LocalizedString,
 		transcription: (arg: { transcription: string }) => LocalizedString,
 		started: () => LocalizedString,
 		prompt: () => LocalizedString,
@@ -35,7 +35,7 @@ export type TranslationFunctions = {
 		balance: (arg: { name: string, balance: number, link: string }) => LocalizedString,
 		created: (arg: { name: string, balance: number, audioMinutes: number }) => LocalizedString,
 		alreadyregistered: (arg: { name: string, balance: number, audioMinutes: number }) => LocalizedString,
-		default: (arg: { audioMinutes: number, balance: number }) => LocalizedString,
+		default: (arg: { audioMinutes: number, balance: number, link: string }) => LocalizedString,
 		insufficientBalance: (arg: { balance: number, link: string }) => LocalizedString,
 		noBalance: (arg: { audioMinutes: number, link: string }) => LocalizedString,
 	}
