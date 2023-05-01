@@ -1,7 +1,7 @@
 import { Translation } from "../i18n-types";
 
 const pt: Translation = {
-	hi: `Olá {name:string}!\nEu sou um bot desenvolvido para transformar áudio em texto resumido para você. Com a minha ajuda, você pode obter um resumo preciso e conciso do que foi dito no áudio sem precisar ouvir todo o conteúdo. Por favor, escolha um dos seguintes idiomas para nossa conversa:\nDigite\n- en para Inglês\n- pt para Português\n- es para Espanhol`,
+	hi: `Hello Visitor, I'm a bot developed to transcribe audio into summarized text for you. With my help, you can get an accurate and concise summary of what was said in the audio without having to listen to the entire content.\n\nPlease choose one of the following languages for our conversation:`,
 	audio: {
 		notfound: `Áudio não encontrado, envie um áudio para iniciar o processo!\nSerá cobrado {audioMinutes:number} crédito por minuto de áudio enviado (arredondado para o segundo mais próximo).`,
 		finished: `Seu áudio foi processado com sucesso!\n\nResumo do áudio:\n{summary:string}\n\nAgora seu saldo é de {balance:number} créditos`,
