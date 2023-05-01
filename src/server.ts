@@ -1,3 +1,4 @@
+import L from '@domain/shared/i18n/i18n-node';
 import UserPrismaRepository from '@infra/database/prisma/repository/user-prisma.repository';
 import { AudioService } from '@infra/service/audio.service';
 import TranscriptionWhisperService from '@infra/service/transcription-whisper.service';
@@ -95,6 +96,16 @@ app.get('/health', (req, res) => {
 
 app.get('/', (req, res) => {
   res.end('Hello World!');
+});
+
+app.get('/en', (req, res) => {
+  res.send(L['en'].hi({ name: 'John Doe' }));
+});
+app.get('/es', (req, res) => {
+  res.send(L['es'].hi({ name: 'John Doe' }));
+});
+app.get('/pt', (req, res) => {
+  res.send(L['pt'].hi({ name: 'John Doe' }));
 });
 
 app.use((req, res) => {

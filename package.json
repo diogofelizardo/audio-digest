@@ -3,7 +3,7 @@
    "version": "1.0.0",
    "main": "dist/server.js",
    "scripts": {
-      "dev": "nodemon",
+      "dev": "npx kill-port 3000 && nodemon",
       "build": "npm run prisma:deploy && rm -rf ./dist && tsc -p tsconfig.build.json && tsc-alias",
       "start": "node ./dist/server.js",
       "lint": "eslint . --ext .ts",

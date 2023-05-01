@@ -1,7 +1,7 @@
 import { Translation } from "../i18n-types";
 
 const es: Translation = {
-	hi: `¡Hola {name:string}!\nSoy un bot para ayudarte. Por favor, elige uno de los siguientes idiomas para nuestra conversación:\nen - Inglés\npt - Portugués\nes - Español`,
+	hi: `¡Hola {name:string}!\nSoy un bot desarrollado para ayudarte a convertir audio en texto resumido. Con mi ayuda, puedes obtener un resumen preciso y conciso de lo que se dijo en el audio sin tener que escuchar todo el contenido. Por favor, elige uno de los siguientes idiomas para nuestra conversación:\nEscribe\n- en para inglés\n- pt para portugués\n- es para español`,
 	audio: {
 		notfound: `Audio no encontrado, ¡envíame un audio para comenzar el proceso!\nSe cobrará {audioMinutes:number} crédito por cada minuto de audio enviado (con redondeo al segundo más cercano).`,
 		finished: `¡Su audio ha sido procesado exitosamente!\n\nResumen de audio:\n{summary:string}\n\nAhora su saldo es de {balance:number} créditos`,

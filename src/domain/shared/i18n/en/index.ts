@@ -1,7 +1,7 @@
 import type { BaseTranslation } from '../i18n-types'
 
 const en: BaseTranslation = {
-	hi: `Hello {name:string}!\nI'm a bot to assist you. Kindly select one of the following languages for our conversation:\nen - English\npt - Português\nes - Spanish`,
+	hi: `Hello {name:string}!\nI'm a bot developed to help you convert audio into summarized text. With my help, you can obtain an accurate and concise summary of what was said in the audio without having to listen to the entire content. Please choose one of the following languages for our conversation:\nType\n- en for English\n- pt for Português\n- es for Spanish`,
 	audio: {
 		notfound: `Audio not found, send me an audio to start the process!\n{audioMinutes:number} credit will be charged per minute of audio sent (rounded to the nearest second).`,
 		finished: `Your audio has been processed successfully!\n\nAudio Summary:\n{summary:string}\n\nNow your balance is {balance:number} credits`,
