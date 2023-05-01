@@ -1,43 +1,57 @@
-import MessageProperties from "./message-properties";
+import MessageProperties from './message-properties';
 
 describe('MessageProperties', () => {
-  const defaultProps = {
-    mediaContentType0: 'image/jpeg',
-    smsMessageSid: 'SM1234567890',
-    numMedia: '1',
-    profileName: 'John Doe',
-    smsSid: 'SM1234567890',
-    waId: '1234567890',
-    smsStatus: 'sent',
-    body: 'Hello, World!',
-    to: '+1234567890',
-    numSegments: '1',
-    referralNumMedia: '1',
-    messageSid: 'MM1234567890',
-    accountSid: 'AC1234567890',
-    from: '+0987654321',
-    mediaUrl0: 'https://example.com/media.jpg',
-    apiVersion: '2023-04-22',
+  const properties = {
+    SmsMessageSid: 'SMXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+    NumMedia: '0',
+    ProfileName: 'John Doe',
+    SmsSid: 'SMXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+    WaId: '15555555555',
+    SmsStatus: 'received',
+    Body: 'Hello, world!',
+    To: 'whatsapp:+14155238886',
+    NumSegments: '1',
+    ReferralNumMedia: '',
+    MessageSid: 'SMXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+    AccountSid: 'ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
+    From: 'whatsapp:+15555555555',
+    ApiVersion: '2010-04-01',
   };
 
-  it('should assign properties correctly', () => {
-    const messageProperties = new MessageProperties(defaultProps);
+  let messageProperties: MessageProperties;
 
-    expect(messageProperties).toEqual(defaultProps);
+  beforeEach(() => {
+    messageProperties = new MessageProperties(properties);
   });
 
-  it('should compare equality correctly', () => {
-    const messageProperties1 = new MessageProperties(defaultProps);
-    const messageProperties2 = new MessageProperties(defaultProps);
-
-    expect(messageProperties1.equals(messageProperties2)).toBeTruthy();
+  describe('constructor', () => {
+    it('should create message properties with the correct values', () => {
+      expect(messageProperties.smsMessageSid).toEqual(properties.SmsMessageSid);
+      expect(messageProperties.numMedia).toEqual(properties.NumMedia);
+      expect(messageProperties.profileName).toEqual(properties.ProfileName);
+      expect(messageProperties.smsSid).toEqual(properties.SmsSid);
+      expect(messageProperties.waId).toEqual(properties.WaId);
+      expect(messageProperties.smsStatus).toEqual(properties.SmsStatus);
+      expect(messageProperties.body).toEqual(properties.Body);
+      expect(messageProperties.to).toEqual(properties.To);
+      expect(messageProperties.numSegments).toEqual(properties.NumSegments);
+      expect(messageProperties.referralNumMedia).toEqual(properties.ReferralNumMedia);
+      expect(messageProperties.messageSid).toEqual(properties.MessageSid);
+      expect(messageProperties.accountSid).toEqual(properties.AccountSid);
+      expect(messageProperties.from).toEqual(properties.From);
+      expect(messageProperties.apiVersion).toEqual(properties.ApiVersion);
+    });
   });
 
-  it('should compare inequality correctly', () => {
-    const messageProperties1 = new MessageProperties(defaultProps);
-    const alteredProps = { ...defaultProps, body: 'Hello, Mars!' };
-    const messageProperties2 = new MessageProperties(alteredProps);
+  describe('equals', () => {
+    it('should return true when comparing two message properties with the same values', () => {
+      const other = new MessageProperties(properties);
+      expect(messageProperties.equals(other)).toBe(true);
+    });
 
-    expect(messageProperties1.equals(messageProperties2)).toBeFalsy();
+    it('should return false when comparing two message properties with different values', () => {
+      const other = new MessageProperties({ ...properties, Body: 'Goodbye, world!' });
+      expect(messageProperties.equals(other)).toBe(false);
+    });
   });
 });

@@ -1,114 +1,57 @@
-import Message from "@domain/message/entity/message";
-import User from "@domain/user/entity/user";
+import Message from '@domain/message/entity/message';
+import User from './user';
 
-describe("User", () => {
-  const dateNow = new Date();
-  it("should add message to messages array", () => {
-    const user = new User(
-      "123",
-      "John Doe",
-      "1234567890",
-      100,
-      dateNow,
-      dateNow
-    );
+describe('User', () => {
+  const id = 'user-id';
+  const profileName = 'John Doe';
+  const whatsappId = '+15555555555';
+  const locale = 'en';
+  const balance = 100;
+  const createdAt = new Date();
+  const updatedAt = new Date();
 
-    const message = new Message("456", "123", 10, dateNow, dateNow);
-    user.addMessage(message);
+  let user: User;
 
-    expect(user.messages.length).toBe(1);
-    expect(user.messages[0]).toBe(message);
+  beforeEach(() => {
+    user = new User(id, profileName, whatsappId, locale, balance, createdAt, updatedAt);
   });
 
-  it("should subtract balance from user's balance", () => {
-    const user = new User(
-      "123",
-      "John Doe",
-      "1234567890",
-      100,
-      dateNow,
-      dateNow
-    );
-    user.subtractBalance(50);
-
-    expect(user.balance).toBe(50);
+  describe('constructor', () => {
+    it('should create a user with the correct properties', () => {
+      expect(user.id).toEqual(id);
+      expect(user.profileName).toEqual(profileName);
+      expect(user.whatsappId).toEqual(whatsappId);
+      expect(user.locale).toEqual(locale);
+      expect(user.balance).toEqual(balance);
+      expect(user.createdAt).toEqual(createdAt);
+      expect(user.updatedAt).toEqual(updatedAt);
+    });
   });
 
-  it("should throw error when subtracting more than user's balance", () => {
-    const user = new User(
-      "123",
-      "John Doe",
-      "1234567890",
-      100,
-      dateNow,
-      dateNow
-    );
-    expect(() => {
-      user.subtractBalance(200);
-    }).toThrowError("Insufficient balance");
+  describe('addMessage', () => {
+    it('should add a message to the user', () => {
+      const message = new Message('message-id', user.id, new Date(), new Date());
+      user.addMessage(message);
+      expect(user.messages.length).toEqual(1);
+      expect(user.messages[0]).toEqual(message);
+    });
   });
 
-  it("should add balance to user's balance", () => {
-    const user = new User(
-      "123",
-      "John Doe",
-      "1234567890",
-      100,
-      dateNow,
-      dateNow
-    );
-    user.addBalance(50);
+  describe('subtractBalance', () => {
+    it('should subtract the specified amount from the user balance', () => {
+      user.subtractBalance(50);
+      expect(user.balance).toEqual(50);
+    });
 
-    expect(user.balance).toBe(150);
+    it('should throw an error if the amount is greater than the user balance', () => {
+      expect(() => user.subtractBalance(200)).toThrow('Insufficient balance');
+    });
   });
 
-  it("should get user's profile name", () => {
-    const user = new User(
-      "123",
-      "John Doe",
-      "1234567890",
-      100,
-      dateNow,
-      dateNow
-    );
-    expect(user.profileName).toBe("John Doe");
-  });
-
-  it("should get user's whatsapp id", () => {
-    const user = new User(
-      "123",
-      "John Doe",
-      "1234567890",
-      100,
-      dateNow,
-      dateNow
-    );
-    expect(user.whatsappId).toBe("1234567890");
-  });
-
-  it("should get user's created date", () => {
-    const createdAt = dateNow;
-    const user = new User(
-      "123",
-      "John Doe",
-      "1234567890",
-      100,
-      createdAt,
-      dateNow
-    );
-    expect(user.createdAt).toBe(createdAt);
-  });
-
-  it("should get user's updated date", () => {
-    const updatedAt = dateNow;
-    const user = new User(
-      "123",
-      "John Doe",
-      "1234567890",
-      100,
-      dateNow,
-      updatedAt
-    );
-    expect(user.updatedAt).toBe(updatedAt);
+  describe('addBalance', () => {
+    it('should add the specified amount to the user balance', () => {
+      user.addBalance(50);
+      expect(user.balance).toEqual(150);
+    });
   });
 });

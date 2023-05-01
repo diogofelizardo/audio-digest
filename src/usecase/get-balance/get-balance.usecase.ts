@@ -1,5 +1,7 @@
 import L from "@domain/shared/i18n/i18n-node";
+import SystemRules from "@domain/shared/system-rules";
 import UserRepositoryInterface from "@domain/user/repository/user-repository.interface";
+import PhoneValidation from "utils/phoneValidation";
 import { InputGetBalanceDTO, OutputGetBalanceDTO } from "./get-balance.dto";
 
 export default class GetBalanceUseCase {
@@ -13,18 +15,19 @@ export default class GetBalanceUseCase {
     const findUser = await this.UserRepository.findByWhatsappId(input.whatsappId);
 
     if (!findUser) {
+      const locale = PhoneValidation.getLocale(`+${input.whatsappId}`);
       return {
-        response: L['en'].hi({ name: input.profileName })
+        response: L[locale].hi({ name: input.profileName })
       };
     }
 
+    const rules = SystemRules.getInstance();
     return {
-      profileName: findUser.profileName,
-      whatsappId: findUser.whatsappId,
-      balance: findUser.balance,
       response: L[findUser.locale].user.balance({
         name: input.profileName,
-        balance: findUser.balance
+        balance: findUser.balance,
+        audioMinutes: rules.audioMinutes,
+        link: findUser.locale == 'pt' ? rules.linkBR : rules.linkUSA
       })
     };
   }

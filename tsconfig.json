@@ -4,8 +4,8 @@
 	},
 	"compilerOptions": {
 		/* Language and Environment */
-		"target": "es2016",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-		"lib": ["es6"],                                      /* Specify a set of bundled library declaration files that describe the target runtime environment. */
+		"target": "es2018",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+		"lib": ["es5", "es6", "ES2018"],                                      /* Specify a set of bundled library declaration files that describe the target runtime environment. */
 		"moduleResolution": "node",
 		"baseUrl": "src",
 		"paths": {
@@ -19,10 +19,10 @@
 		"resolveJsonModule": true,                           /* Enable importing .json files. */
 
 		/* JavaScript Support */
-		"allowJs": false,                                     /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
+		"allowJs": true,                                     /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
 
 		/* Emit */
-		"outDir": "./build",                                   /* Specify an output folder for all emitted files. */
+		"outDir": "./dist",                                   /* Specify an output folder for all emitted files. */
 		"esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
 		"forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
 

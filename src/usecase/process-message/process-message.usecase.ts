@@ -13,6 +13,7 @@ import UserPrismaRepository from "@infra/database/prisma/repository/user-prisma.
 import ChatGPTService from "@infra/service/chatgpt.service";
 import { Twilio } from "twilio";
 import logger from 'utils/logger';
+import PhoneValidation from "utils/phoneValidation";
 import { InputMessageDTO, OutputMessageDTO } from "./process-message.dto";
 
 export default class ProcessMessageUsecase {
@@ -32,15 +33,16 @@ export default class ProcessMessageUsecase {
     const rules = SystemRules.getInstance();
 
     if (!findUser) {
+      const locale = PhoneValidation.getLocale(`+${input.WaId}`);
       return {
-        response: L['en'].hi({ name: input.ProfileName }),
+        response: L[locale].hi({ name: input.ProfileName }),
       };
     }
     const { locale: userLocale } = findUser;
 
     if (input.MediaContentType0 !== 'audio/ogg' || input.NumMedia !== '1' || !input.MediaUrl0) {
       return {
-        response: L[findUser.locale].audio.notfound({ audioMinutes: rules.audioMinutes }),
+        response: L[userLocale].audio.notfound({ audioMinutes: rules.audioMinutes }),
       };
     }
 
@@ -127,7 +129,7 @@ export default class ProcessMessageUsecase {
       return {
         response: L[userLocale].audio.finished({
           summary: audioSummary,
-          balance: findUser.balance,
+          balance: findUser.balance
         })
       }
     } catch (error) {

@@ -1,6 +1,7 @@
 import L from "@domain/shared/i18n/i18n-node";
 import SystemRules from "@domain/shared/system-rules";
 import UserRepositoryInterface from "@domain/user/repository/user-repository.interface";
+import PhoneValidation from "utils/phoneValidation";
 import { InputDefaultResponseDTO, OutputDefaultResponseDTO } from "./default-response.dto";
 
 export default class DefaultResponseUsecase {
@@ -12,16 +13,15 @@ export default class DefaultResponseUsecase {
 
   async execute(input: InputDefaultResponseDTO): Promise<OutputDefaultResponseDTO> {
     const findUser = await this.UserRepository.findByWhatsappId(input.whatsappId);
-
     if (!findUser) {
+      const locale = PhoneValidation.getLocale(`+${input.whatsappId}`);
       return {
-        response: L['en'].hi({ name: input.profileName })
+        response: L[locale].hi({ name: input.profileName })
       }
     }
 
     const rules = SystemRules.getInstance();
-
-    if (findUser.balance > 0) {
+    if (findUser.balance <= 0) {
       return {
         response: L[findUser.locale].user.noBalance({
           audioMinutes: rules.audioMinutes,
@@ -32,7 +32,8 @@ export default class DefaultResponseUsecase {
       return {
         response: L[findUser.locale].user.default({
           audioMinutes: rules.audioMinutes,
-          balance: findUser.balance
+          balance: findUser.balance,
+          link: findUser.locale == 'pt' ? rules.linkBR : rules.linkUSA
         })
       }
     }
