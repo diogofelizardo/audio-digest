@@ -1,6 +1,7 @@
 export default class SystemRules {
   private _audioMinutes: number = 1;
   private _inicialBalance: number = 20;
+  private _minimumAudioDuration: number = 60;
   private _linkBRBuyCredits: string = 'https://donate.stripe.com/00g5mVeVh1qh1uo4gg';
   private _linkUSABuyCredits: string = 'https://buy.stripe.com/dR69DbbJ55Gx7SM9AB';
 
@@ -30,6 +31,10 @@ export default class SystemRules {
 
   get linkUSA(): string {
     return this._linkUSABuyCredits;
+  }
+
+  get minimumAudioDuration(): number {
+    return this._minimumAudioDuration;
   }
 
   calculateCost(audioDuration: number): number {
