@@ -1,12 +1,13 @@
 import Transcription from "@domain/transcription/entity/transcription";
 import TranscriptionRepositoryInterface from "@domain/transcription/repository/transcription-repository.interface";
 import { PrismaClient } from "@prisma/client";
+import prisma from '../lib/prisma';
 
 export default class TranscriptionPrismaRepository implements TranscriptionRepositoryInterface {
   private prisma: PrismaClient;
 
   constructor() {
-    this.prisma = new PrismaClient();
+    this.prisma = prisma;
   }
 
   async create(entity: Transcription): Promise<void> {

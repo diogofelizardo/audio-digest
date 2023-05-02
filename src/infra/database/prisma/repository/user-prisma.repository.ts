@@ -1,12 +1,13 @@
 import User from '@domain/user/entity/user';
 import UserRepositoryInterface from '@domain/user/repository/user-repository.interface';
 import { PrismaClient, User as UserModel } from '@prisma/client';
+import prisma from '../lib/prisma';
 
 export default class UserPrismaRepository implements UserRepositoryInterface {
   private prisma: PrismaClient;
 
   constructor() {
-    this.prisma = new PrismaClient();
+    this.prisma = prisma;
   }
 
   async create(entity: User): Promise<void> {
