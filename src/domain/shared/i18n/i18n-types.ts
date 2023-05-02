@@ -30,6 +30,7 @@ export type TranslationFunctions = {
 		transcription: (arg: { transcription: string }) => LocalizedString,
 		started: () => LocalizedString,
 		prompt: () => LocalizedString,
+		tooShort: (arg: { minimumAudioDuration: number }) => LocalizedString,
 	},
 	user: {
 		balance: (arg: { name: string, balance: number, audioMinutes: number, link: string }) => LocalizedString,

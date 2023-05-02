@@ -57,6 +57,12 @@ export default class ProcessMessageUsecase {
         throw new Error('Audio duration not found');
       }
 
+      if (audioDuration < rules.minimumAudioDuration) {
+        return {
+          response: L[userLocale].audio.tooShort({ minimumAudioDuration: rules.minimumAudioDuration }),
+        };
+      }
+
       if (!rules.haveEnoughBalance(findUser.balance, audioDuration)) {
         return {
           response: L[userLocale].user.insufficientBalance({

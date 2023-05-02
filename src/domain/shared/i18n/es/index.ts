@@ -1,13 +1,15 @@
 import { Translation } from "../i18n-types";
 
 const es: Translation = {
-	hi: `¡Hola {name:string}!\nSoy un bot desarrollado para ayudarte a convertir audio en texto resumido. Con mi ayuda, puedes obtener un resumen preciso y conciso de lo que se dijo en el audio sin tener que escuchar todo el contenido. Por favor, elige uno de los siguientes idiomas para nuestra conversación:\nEscribe\n- en para inglés\n- pt para portugués\n- es para español`,
+	// hi: `¡Hola {name:string}!\nSoy un bot desarrollado para ayudarte a convertir audio en texto resumido. Con mi ayuda, puedes obtener un resumen preciso y conciso de lo que se dijo en el audio sin tener que escuchar todo el contenido. Por favor, elige uno de los siguientes idiomas para nuestra conversación:\nEscribe\n- en para inglés\n- pt para portugués\n- es para español`,
+	hi: `Hello {name:string}!\nI am a bot developed to convert audio into summarized text for you. With my help, you can get an accurate and concise summary of what was said in the audio without having to listen to the entire content.\nPlease choose one of the following languages for our conversation:`,
 	audio: {
 		notfound: `Audio no encontrado, ¡envíame un audio para comenzar el proceso!\nSe cobrará {audioMinutes:number} crédito por cada minuto de audio enviado (con redondeo al segundo más cercano).`,
 		finished: `¡Su audio ha sido procesado exitosamente!\n\nResumen de audio:\n{summary:string}\n\nAhora su saldo es de {balance:number} créditos`,
 		transcription: `Transcripción de audio: {transcription:string}`,
 		started: `¡Su audio se está procesando, espere unos segundos!`,
 		prompt: `Enumere los puntos principales de este texto:`,
+		tooShort: `El audio es demasiado corto, ¡envíe un audio de más de {minimumAudioDuration:number} segundos para comenzar el proceso!`,
 	},
 	user: {
 		balance: `¡Hola {name:string}! Tienes {balance:number} créditos disponibles en tu cuenta.\nSe cobrará {audioMinutes:number} crédito por cada minuto de audio enviado (con redondeo al segundo más cercano).\n¡Ahora puedes enviarme un audio para comenzar el proceso!\n\nSi quieres agregar más créditos, por favor accede al enlace: {link:string}`,
