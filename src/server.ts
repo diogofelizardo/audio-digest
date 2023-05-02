@@ -60,11 +60,12 @@ app.post('/163d357e-29d6-490c-b3c9-ecac0c1a99fa', upload.single('Media'), async 
       case 'english':
       case 'português':
       case 'espanhol': {
+        const language: 'en' | 'pt' | 'es' = command == 'english' ? 'en' : command == 'português' ? 'pt' : 'es';
         const createUserUsecase = new CreateUserUsecase(userPrismaRepository);
         const inputCreateUser = {
           profileName: ProfileName,
           whatsappId: WaId,
-          language: command,
+          language: language,
         };
         const outputCreateUser = await createUserUsecase.execute(inputCreateUser);
         response = outputCreateUser.response;
