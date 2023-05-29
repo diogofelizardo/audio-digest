@@ -57,11 +57,11 @@ export default class ProcessMessageUsecase {
         throw new Error('Audio duration not found');
       }
 
-      if (audioDuration < rules.minimumAudioDuration) {
-        return {
-          response: L[userLocale].audio.tooShort({ minimumAudioDuration: rules.minimumAudioDuration }),
-        };
-      }
+      // if (audioDuration < rules.minimumAudioDuration) {
+      //   return {
+      //     response: L[userLocale].audio.tooShort({ minimumAudioDuration: rules.minimumAudioDuration }),
+      //   };
+      // }
 
       if (!rules.haveEnoughBalance(findUser.balance, audioDuration)) {
         return {
@@ -114,29 +114,37 @@ export default class ProcessMessageUsecase {
 
       await messageRepository.create(message);
 
-      const chatgpt = new ChatGPTService();
-      const audioSummary = await chatgpt.sendMessageToChatGPT(
-        L[userLocale].audio.prompt(),
-        audioTranscription
-      );
+      if (audioDuration > rules.minimumAudioDuration) {
+        const chatgpt = new ChatGPTService();
+        const audioSummary = await chatgpt.sendMessageToChatGPT(
+          L[userLocale].audio.prompt(),
+          audioTranscription
+        );
 
-      const summary = SummaryFactory.create(message.id, audioSummary);
-      const summaryRepository = new SummaryPrismaRepository();
-      await summaryRepository.create(summary);
+        const summary = SummaryFactory.create(message.id, audioSummary);
+        const summaryRepository = new SummaryPrismaRepository();
+        await summaryRepository.create(summary);
 
-      if (!audioSummary) {
-        logger.error('Audio summary not found');
-        throw new Error('Audio summary not found');
-      }
+        if (!audioSummary) {
+          logger.error('Audio summary not found');
+          throw new Error('Audio summary not found');
+        }
 
-      findUser.subtractBalance(rules.calculateCost(audioDuration));
-      userRepository.update(findUser);
+        findUser.subtractBalance(rules.calculateCost(audioDuration));
+        userRepository.update(findUser);
 
-      return {
-        response: L[userLocale].audio.finished({
-          summary: audioSummary,
-          balance: findUser.balance
-        })
+        return {
+          response: L[userLocale].audio.finished({
+            summary: audioSummary,
+            balance: findUser.balance
+          })
+        }
+      } else {
+        return {
+          response: L[userLocale].audio.transcription({
+            transcription: audioTranscription
+          })
+        }
       }
     } catch (error) {
       logger.error(`Error processing message : ${(error as Error).message}`);
