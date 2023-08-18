@@ -96,7 +96,7 @@ app.get('/health', (req, res) => {
   res.sendStatus(200);
 });
 
-app.get('/', (req, res) => {
+app.get('/hello', (req, res) => {
   res.end('Hello World!');
 });
 
